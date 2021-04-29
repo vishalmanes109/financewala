@@ -22,7 +22,7 @@ module.exports = {
             result: JSON.parse(data),
           });
         } else {
-          console.log(data);
+          console.log("data", data);
 
           next();
         }

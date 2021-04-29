@@ -6,6 +6,7 @@ create table transaction (
 	amount decimal not null check(amount >0),
 	date timestamp not null,
 	mode_of_payment varchar(50) default '-1',
+	essential smallint  default -1 ,
 	category_id serial not null,
 	currency_id int not null,
 	transaction_type_id serial not null,
@@ -25,7 +26,15 @@ create table transaction (
 
 );
 
-create table category (id serial primary key , name varchar(50) not null);
+
+create table category (
+	id serial primary key ,
+	name varchar(50) not null,
+	transaction_type_id serial ,
+	CONSTRAINT fk_category_transaction_type_id
+      FOREIGN KEY(transaction_type_id) 
+	  REFERENCES transaction_type(id)
+);
 
 create table currency (id serial  primary key, name varchar(20) not null , country varchar (50) not null ,symbol varchar(20)  );
 
@@ -34,3 +43,4 @@ create table transaction_type (
 id serial primary key,
 type varchar not null
 );
+

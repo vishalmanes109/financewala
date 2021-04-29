@@ -13,3 +13,4 @@ CREATE TABLE user_i (
 	  REFERENCES currency(id)
 );
 
+create table currency (id serial  primary key, name varchar(20) not null , country varchar (50) not null ,symbol varchar(20)  );

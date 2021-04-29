@@ -42,8 +42,15 @@ module.exports = {
   createUser: async (req, res) => {
     let userData = req.body;
     // console.log(userData);
+    // check if data passed to create user
+    if (userData.constructor === Object && Object.keys(userData).length === 0)
+      return res.status(500).json({
+        success: 0,
+        message: "No data passed to create user",
+      });
 
     // removeing all the white spaces in name
+
     userData.name = DataCleaning(userData.name);
     const salt = genSaltSync(10);
 
@@ -174,6 +181,13 @@ module.exports = {
   },
   updateUser: async (req, res) => {
     let userData = req.body;
+    console.log(userData.length);
+    // check for the req.body has data to update
+    if (userData.constructor === Object && Object.keys(userData).length === 0)
+      return res.status(500).json({
+        success: 0,
+        message: "No data send to update",
+      });
     if (userData.attribute === "password") {
       const salt = genSaltSync(10);
 

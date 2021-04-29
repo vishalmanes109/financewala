@@ -1,4 +1,4 @@
-const pool = require("../utilities/database");
+const { pool } = require("../utilities/database");
 
 module.exports = {
   isUserNameAvailable: async (userName) => {
@@ -7,15 +7,15 @@ module.exports = {
         `select name from user_i where name like $1`,
         [userName]
       );
-      // // // // console   .log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      // // // // console   .log(err);
+      // console.log(err);
       return err;
     }
   },
   createUser: async (userData) => {
-    // // // console   .log(userData);
+    // console.log(userData);
 
     try {
       let timestamp_result = await pool.query(`select now()`);
@@ -34,18 +34,20 @@ module.exports = {
           userData.currency_id,
         ]
       );
-      // // console  .log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      // // console  .log(err);
+      // console.log(err);
       return err;
     }
   },
   deleteUser: async (userId) => {
     try {
       let result = await pool.query(`delete from user_i where id=$1`, [userId]);
+      // console.log(result);
       return result;
     } catch (err) {
+      // console.log(err);
       return err;
     }
   },
@@ -76,21 +78,21 @@ module.exports = {
           [userData.currency_id, userData.id]
         );
       }
-      // // console  .log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      // // console  .log(err);
+      // console.log(err);
       return err;
     }
   },
   getUser: async () => {
     try {
-      // // console  .log("lol");
+      // console.log("lol");
       let result = await pool.query(`select *  from user_i`);
-      // // console  .log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      // // console  .log(err);
+      // console.log(err);
       return err;
     }
   },
@@ -110,10 +112,10 @@ module.exports = {
         `select name,password from user_i where name=$1`,
         [userName]
       );
-      // // console  .log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      // // console  .log(err);
+      // console.log(err);
       return err;
     }
   },
