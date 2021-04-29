@@ -8,7 +8,7 @@ const pool = new Pool({
   host: "localhost" || process.env.DB_HOST,
   user: "postgres" || process.env.PGUSER,
   password: "123" || process.env.PGDB_PASS,
-  database: "financewala" || process.env.MYSQL_DB,
+  database: "transactionService" || process.env.MYSQL_DB,
 });
 
 // const pool = new Pool({

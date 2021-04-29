@@ -10,11 +10,23 @@ const {
 
 const { nanoid } = require("nanoid/async");
 const { redisClient } = require("../utilities/database");
+const { dataCleaning, isValidAmount } = require("../utilities/validator");
 module.exports = {
   addTransaction: async (req, res) => {
     let transactionData = req.body;
     transactionData.id = await nanoid(10);
     // console .log(transactionData);
+    transactionData.title = dataCleaning(transactionData.title);
+    transactionData.description = dataCleaning(transactionData.description);
+    transactionData.mode_of_payment = dataCleaning(
+      transactionData.mode_of_payment
+    );
+
+    if (!isValidAmount(transactionData.amount))
+      return res.status(500).json({
+        success: 0,
+        message: "invalide amount",
+      });
 
     let result = await addTransaction(transactionData);
     if (result.name)
@@ -55,6 +67,19 @@ module.exports = {
   updateTransaction: async (req, res) => {
     let transactionData = req.body;
     // console .log(transactionData);
+
+    transactionData.title = dataCleaning(transactionData.title);
+    transactionData.description = dataCleaning(transactionData.description);
+    transactionData.mode_of_payment = dataCleaning(
+      transactionData.mode_of_payment
+    );
+    transactionData.attribute = dataCleaning(transactionData.attribute);
+
+    if (!isValidAmount(transactionData.amount))
+      return res.status(500).json({
+        success: 0,
+        message: "invalide amount",
+      });
 
     let result = await updateTransaction(transactionData);
     if (result.name)
