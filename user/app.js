@@ -19,6 +19,6 @@ app.get("/api", (req, res) => {
   });
 });
 
-app.listen(process.env.PORT || 3005, () => {
-  console.log("user  server up and running on 3005");
+app.listen(process.env.PORT || 3001, () => {
+  console.log("user  server up and running on 3001");
 });
