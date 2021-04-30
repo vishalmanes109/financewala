@@ -15,18 +15,17 @@ module.exports = {
     }
   },
   createUser: async (userData) => {
-    // console.log(userData);
-
     try {
       let timestamp_result = await pool.query(`select now()`);
 
       let created_on = timestamp_result.rows[0].now;
 
       let result = await pool.query(
-        `insert into user_i(name,password,avatar,created_on,theme,last_login,currency_id) values($1,$2,$3,$4,$5,$6,$7)`,
+        `insert into user_i(name,password,email,avatar,created_on,theme,last_login,currency_id) values($1,$2,$3,$4,$5,$6,$7,$8)`,
         [
           userData.name,
           userData.password,
+          userData.email,
           userData.avatar,
           created_on,
           userData.theme,
@@ -34,10 +33,10 @@ module.exports = {
           userData.currency_id,
         ]
       );
-      // console.log(result);
+      console.log(result);
       return result;
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       return err;
     }
   },
@@ -87,7 +86,7 @@ module.exports = {
   },
   getUser: async () => {
     try {
-      // console.log("lol");
+      console.log("lol");
       let result = await pool.query(`select *  from user_i`);
       // console.log(result);
       return result;

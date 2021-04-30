@@ -6,7 +6,9 @@ const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s)
 const DataCleaning = (data) => {
   return data.replace(/\s+/g, " ").trim();
 };
-
+const isValidString = (string) => {
+  return string.length > 0;
+};
 const isValidEmail = (email) => {
   if (!email) {
     return false;
@@ -47,4 +49,5 @@ module.exports = {
   isValidEmail,
   isValidPassword,
   DataCleaning,
+  isValidString,
 };

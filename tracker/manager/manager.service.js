@@ -185,4 +185,17 @@ module.exports = {
       return err;
     }
   },
+  getRecentTransaction: async (user_id) => {
+    try {
+      let result = await pool.query(
+        `select * from transaction where  user_id=$1 order by date Desc `,
+        [user_id]
+      );
+      // console.log(result);
+      return result;
+    } catch (err) {
+      // console.log(err);
+      return err;
+    }
+  },
 };

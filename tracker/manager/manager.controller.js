@@ -6,6 +6,7 @@ const {
   getTotalIncomeForMonth,
   getTotalExpenseForMonth,
   getTotalTransferForMonth,
+  getRecentTransaction,
 } = require("./manager.service");
 
 const { nanoid } = require("nanoid/async");
@@ -23,7 +24,7 @@ module.exports = {
     );
 
     if (!isValidAmount(transactionData.amount))
-      return res.status(500).json({
+      return res.status(400).json({
         success: 0,
         message: "invalide amount",
       });
@@ -39,7 +40,7 @@ module.exports = {
         success: 1,
         message: "Transaction added sucessful!",
       });
-    return res.status(500).json({
+    return res.status(400).json({
       success: 0,
       message: "transaction failed!",
     });
@@ -59,7 +60,7 @@ module.exports = {
         success: 1,
         message: "Transaction deleted sucessful!",
       });
-    return res.status(500).json({
+    return res.status(400).json({
       success: 0,
       message: "transaction id does not exist",
     });
@@ -114,7 +115,7 @@ module.exports = {
         message: "Transacion sucessful!",
         result: result.rows,
       });
-    return res.status(500).json({
+    return res.status(400).json({
       success: 0,
       message: "0 result found!",
     });
@@ -189,6 +190,25 @@ module.exports = {
     return res.status(500).json({
       success: 0,
       message: "No data for given user found",
+    });
+  },
+  getRecentTransaction: async (req, res) => {
+    let user_id = req.params.userid;
+
+    let result = await getRecentTransaction(user_id);
+    if (result.name)
+      return res.status(500).json({
+        success: 0,
+        message: "Error in query!",
+      });
+    if (result.rowCount > 0)
+      return res.status(200).json({
+        success: 1,
+        result: result.rows,
+      });
+    return res.status(400).json({
+      success: 0,
+      message: "0 result found!",
     });
   },
 };

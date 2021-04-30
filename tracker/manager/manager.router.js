@@ -5,6 +5,7 @@ const {
   getTransactionByAttribute,
   updateTransaction,
   getAllTransactionForMonth,
+  getRecentTransaction,
 } = require("./manager.controller");
 const { getCachedAllTransactionForMonth } = require("../utilities/caching");
 const router = express.Router();
@@ -15,6 +16,7 @@ router.get(
   getCachedAllTransactionForMonth,
   getAllTransactionForMonth
 );
+router.get("/recent/:userid", getRecentTransaction);
 router.post("/", addTransaction);
 router.patch("/", updateTransaction);
 router.delete("/", deleteTransaction);

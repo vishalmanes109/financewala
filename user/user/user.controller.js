@@ -11,13 +11,18 @@ const {
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 // import sign method of jsw lib fro generating token on login
 const { sign } = require("jsonwebtoken");
-const { DataCleaning } = require("../utilities/validator");
+const { DataCleaning, isValidString } = require("../utilities/validator");
 
 module.exports = {
   isUserNameAvailable: async (req, res) => {
     let userName = req.params.username;
     // data cleaning : remove all the white spaces
     userName = DataCleaning(userName);
+    if (!isValidString(userName))
+      return res.status(400).json({
+        success: 0,
+        message: "invalid Username",
+      });
     // console.log(userName);
     let result = await isUserNameAvailable(userName);
     if (result.name) {
@@ -27,8 +32,8 @@ module.exports = {
       });
     }
     if (result.rowCount > 0) {
-      return res.status(200).json({
-        success: 1,
+      return res.status(400).json({
+        success: 0,
         message: "username is not avaliable",
         available: false,
       });
@@ -52,6 +57,15 @@ module.exports = {
     // removeing all the white spaces in name
 
     userData.name = DataCleaning(userData.name);
+    if (
+      !isValidString(userData.name) ||
+      !isValidString(userData.email) ||
+      !isValidString(userData.password)
+    )
+      return res.status(400).json({
+        success: 0,
+        message: "invalid user data",
+      });
     const salt = genSaltSync(10);
 
     userData.password = hashSync(userData.password, salt);
@@ -59,7 +73,7 @@ module.exports = {
     let result = await createUser(userData);
     // console.log(result.code);
     if (result.code === 23505)
-      return res.status(500).json({
+      return res.status(400).json({
         success: 0,
         message: "User already present",
         result,
@@ -84,6 +98,11 @@ module.exports = {
   login: async (req, res) => {
     let userData = req.body;
     userName = DataCleaning(userData.name);
+    if (!isValidString(userData.name) || !isValidString(userData.password))
+      return res.status(400).json({
+        success: 0,
+        message: "invalid user data",
+      });
     let result = await login(userName);
     if (result.name)
       return res.status(500).json({
@@ -91,7 +110,7 @@ module.exports = {
         message: "error in query",
       });
     if (result.rowCount == 0)
-      return res.status(200).json({
+      return res.status(400).json({
         success: 0,
         message: "Invalid username / password",
       });
@@ -116,7 +135,7 @@ module.exports = {
           result: result.rows,
         });
       } else {
-        return res.status(500).json({
+        return res.status(400).json({
           success: 0,
           data: "Invalid username / password!",
         });
@@ -137,7 +156,7 @@ module.exports = {
         message: "user data!",
         result: result.rows,
       });
-    return res.status(500).json({
+    return res.status(400).json({
       success: 0,
       message: "no user found",
       // result,
