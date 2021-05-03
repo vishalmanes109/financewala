@@ -2,6 +2,7 @@ const { pool } = require("../utilities/database");
 
 module.exports = {
   addTransaction: async (transactionData) => {
+    console.log(transactionData);
     try {
       let result;
       if (!transactionData.date) {
@@ -24,9 +25,9 @@ module.exports = {
           transactionData.user_id,
         ]
       );
-    } catch (err) {
       // console.log(result);
       return result;
+    } catch (err) {
       // console.log(err);
       return err;
     }

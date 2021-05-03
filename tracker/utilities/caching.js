@@ -32,4 +32,29 @@ module.exports = {
       next();
     }
   },
+  getCachedRecentTransaction: async (req, res, next) => {
+    let { user_id } = req.params;
+    console.log(user_id);
+    try {
+      redisClient.hget(`user${user_id}`, "recentTransaction", (err, data) => {
+        if (err) {
+          console.log("err" + err);
+          next();
+        } else if (data) {
+          console.log("from caching: ", JSON.parse(data));
+          res.status(200).json({
+            success: 1,
+            result: JSON.parse(data),
+          });
+        } else {
+          console.log("data", data);
+
+          next();
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      next();
+    }
+  },
 };

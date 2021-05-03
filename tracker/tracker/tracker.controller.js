@@ -30,7 +30,7 @@ const getDateRange = () => {
 
   if (months.includes(month)) end_date = month + "/" + "31" + "/" + year;
   else end_date = month + "/" + "30" + "/" + year;
-  console.log(today, " ", month, " ", year, " ", start_date, " ", end_date);
+  // console.log(today, " ", month, " ", year, " ", start_date, " ", end_date);
 
   return { start_date, end_date };
 };
@@ -42,7 +42,7 @@ const setCacheForNetMonthlyTransaction = async (user_id) => {
     start_date: dateObject.start_date,
     end_date: dateObject.end_date,
   };
-  console.log(transactionData);
+  // console.log(transactionData);
   let totalIncome = await getTotalIncomeForMonth(transactionData);
   let totalExpense = await getTotalExpenseForMonth(transactionData);
   let TotalTransfer = await getTotalTransferForMonth(transactionData);
@@ -70,9 +70,19 @@ const setCacheForNetMonthlyTransaction = async (user_id) => {
     totalExpense.rowCount > 0 &&
     TotalTransfer.rowCount > 0
   ) {
-    console.log("cacheDataString :", cacheDataString);
+    // console.log("cacheDataString :", cacheDataString);
     return true;
   } else return false;
+};
+
+const setCacheForRecentTransaction = async (user_id) => {
+  let result = await getRecentTransaction(user_id);
+  if (result.rowCount > 0) {
+    let resultString = JSON.stringify(result.rows);
+    redisClient.hmset(`user${user_id}`, ["recentTransaction", resultString]);
+    return true;
+  }
+  return false;
 };
 
 module.exports = {
@@ -80,7 +90,7 @@ module.exports = {
   addTransaction: async (req, res) => {
     let transactionData = req.body;
     transactionData.id = await nanoid(10);
-    // console .log(transactionData);
+    // console.log(transactionData);
     transactionData.title = cleaning(transactionData.title);
     transactionData.description = cleaning(transactionData.description);
     transactionData.mode_of_payment = cleaning(transactionData.mode_of_payment);
@@ -101,6 +111,9 @@ module.exports = {
       if (!setCacheForNetMonthlyTransaction(transactionData.user_id))
         // cashinf failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "totalTransaction");
+      if (!setCacheForRecentTransaction(transactionData.user_id))
+        // cashinf failed the delete previous caching
+        redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
 
       return res.status(200).json({
         success: 1,
@@ -126,6 +139,10 @@ module.exports = {
       if (!setCacheForNetMonthlyTransaction(transactionData.user_id))
         // cashinf failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "totalTransaction");
+      if (!setCacheForRecentTransaction(transactionData.user_id))
+        // cashinf failed the delete previous caching
+        redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
+
       return res.status(200).json({
         success: 1,
         message: "Transaction deleted sucessful!",
@@ -158,6 +175,7 @@ module.exports = {
         message: "Error in query!",
       });
     if (result.rowCount > 0) {
+      // totalTransactionData
       if (
         (transactionData.attribute === "amount" ||
           transactionData.attribute === "transaction_type_id") &&
@@ -165,6 +183,11 @@ module.exports = {
       )
         // cashinf failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "totalTransaction");
+      // recent Transaction Data
+      if (!setCacheForRecentTransaction(transactionData.user_id))
+        // cashinf failed the delete previous caching
+        redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
+
       return res.status(200).json({
         success: 1,
         message: "Transaction updated sucessful!",
@@ -176,7 +199,7 @@ module.exports = {
     });
   },
   getAllTransactionForMonth: async (req, res) => {
-    console.log("from controller");
+    // console.log("from controller");
     let start_date;
     let end_date;
     let user_id = req.params.user_id;
@@ -236,6 +259,7 @@ module.exports = {
     });
   },
   getRecentTransaction: async (req, res) => {
+    // console.log("from controller : recent trans..");
     let user_id = req.params.userid;
 
     let result = await getRecentTransaction(user_id);
@@ -244,11 +268,15 @@ module.exports = {
         success: 0,
         message: "Error in query!",
       });
-    if (result.rowCount > 0)
+    if (result.rowCount > 0) {
+      let resultString = JSON.stringify(result.rows);
+      // console.log("resultStr: ", resultString);
+      redisClient.hmset(`user${user_id}`, ["recentTransaction", resultString]);
       return res.status(200).json({
         success: 1,
         result: result.rows,
       });
+    }
     return res.status(400).json({
       success: 0,
       message: "0 result found!",
@@ -258,7 +286,7 @@ module.exports = {
   getTransactionByAttribute: async (req, res) => {
     let transactionData = req.body;
     transactionData.id = await nanoid(10);
-    console.log(transactionData);
+    // console.log(transactionData);
 
     let result = await getTransactionByAttribute(transactionData);
     if (result.name)
