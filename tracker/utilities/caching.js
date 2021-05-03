@@ -16,7 +16,7 @@ module.exports = {
           console.log("err" + err);
           next();
         } else if (data) {
-          console.log(JSON.parse(data));
+          console.log("from caching: ", JSON.parse(data));
           res.status(200).json({
             success: 1,
             result: JSON.parse(data),

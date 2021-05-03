@@ -6,7 +6,7 @@ const {
   updateTransaction,
   getAllTransactionForMonth,
   getRecentTransaction,
-} = require("./manager.controller");
+} = require("./tracker.controller");
 const { getCachedAllTransactionForMonth } = require("../utilities/caching");
 const router = express.Router();
 

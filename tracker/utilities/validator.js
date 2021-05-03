@@ -1,6 +1,6 @@
 // USER AND PROFILE  VALIDATION
 
-const DataCleaning = (data) => {
+const cleaning = (data) => {
   return data.replace(/\s+/g, " ").trim();
 };
 
@@ -9,6 +9,6 @@ const isValidAmount = (data) => {
 };
 
 module.exports = {
-  DataCleaning,
+  cleaning,
   isValidAmount,
 };

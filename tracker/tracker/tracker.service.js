@@ -24,10 +24,10 @@ module.exports = {
           transactionData.user_id,
         ]
       );
-      // console .log(result);
-      return result;
     } catch (err) {
-      // console .log(err);
+      // console.log(result);
+      return result;
+      // console.log(err);
       return err;
     }
   },
@@ -188,7 +188,8 @@ module.exports = {
   getRecentTransaction: async (user_id) => {
     try {
       let result = await pool.query(
-        `select * from transaction where  user_id=$1 order by date Desc `,
+        `select transaction.id,transaction.title,transaction.description,transaction.amount,transaction.date,transaction.transaction_type_id,transaction.user_id, currency.symbol from transaction,currency 
+        where user_id=$1 and currency_id =currency.id  order by date Desc `,
         [user_id]
       );
       // console.log(result);
