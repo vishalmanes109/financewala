@@ -11,8 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// app.use("/user", userRouter);
-// app.use("/transaction", transactionRouter);
+// app.use("/stats", userRouter);
 
 app.get("/api", (req, res) => {
   return res.json({
