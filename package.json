@@ -1,0 +1,20 @@
+{
+  "name": "financewala",
+  "version": "1.0.0",
+  "description": "expense management app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vishalmanes109/financewala.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vishalmanes109/financewala/issues"
+  },
+  "homepage": "https://github.com/vishalmanes109/financewala#readme"
+}

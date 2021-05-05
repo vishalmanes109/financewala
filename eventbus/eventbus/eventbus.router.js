@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-router.post();
+router.post("/", addMetadata);
 router.post();
 router.get();
 
