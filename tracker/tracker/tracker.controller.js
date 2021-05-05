@@ -88,12 +88,22 @@ const setCacheForRecentTransaction = async (user_id) => {
 module.exports = {
   setCacheForNetMonthlyTransaction,
   addTransaction: async (req, res) => {
+    // ******* TODO  ********//
+    // after adding data into database post request to the event bus
     let transactionData = req.body;
     transactionData.id = await nanoid(10);
     // console.log(transactionData);
     transactionData.title = cleaning(transactionData.title);
     transactionData.description = cleaning(transactionData.description);
     transactionData.mode_of_payment = cleaning(transactionData.mode_of_payment);
+
+    let mataData = {
+      title: transactionData.title,
+      amount: transaction.amount,
+      date: transactionData.date,
+      transaction_id,
+      mode_of_payment: transactionData.mode_of_payment,
+    };
 
     if (!isValidAmount(transactionData.amount))
       return res.status(400).json({
@@ -114,7 +124,14 @@ module.exports = {
       if (!setCacheForRecentTransaction(transactionData.user_id))
         // cashinf failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
-
+      // post this data to event bus
+      // let response = await fetch("localhost://3004/event", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json;charset=utf-8",
+      //   },
+      //   body: mataData,
+      // });
       return res.status(200).json({
         success: 1,
         message: "Transaction added sucessful!",
@@ -143,6 +160,16 @@ module.exports = {
         // cashinf failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
 
+      // let response = await fetch(
+      //   `localhost:3004/event/${transactionData.transaction_id}`,
+      //   {
+      //     method: "DELETE",
+      //     headers: {
+      //       "Content-Type": "application/json;charset=utf-8",
+      //     },
+      //     body: mataData,
+      //   }
+      // );
       return res.status(200).json({
         success: 1,
         message: "Transaction deleted sucessful!",
@@ -161,6 +188,11 @@ module.exports = {
     transactionData.description = cleaning(transactionData.description);
     transactionData.mode_of_payment = cleaning(transactionData.mode_of_payment);
     transactionData.attribute = cleaning(transactionData.attribute);
+
+    let mataData = {
+      title: transactionData.title,
+      transaction_id: transactionData.transaction_id,
+    };
 
     if (!isValidAmount(transactionData.amount))
       return res.status(500).json({
@@ -187,6 +219,14 @@ module.exports = {
       if (!setCacheForRecentTransaction(transactionData.user_id))
         // cashinf failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
+
+      // let response = await fetch("localhost://3004/event", {
+      //   method: "PATCH",
+      //   headers: {
+      //     "Content-Type": "application/json;charset=utf-8",
+      //   },
+      //   body: mataData,
+      // });
 
       return res.status(200).json({
         success: 1,
