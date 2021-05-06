@@ -1,70 +1,112 @@
-const {
-  getTotalIncomeForMonth,
-  getTotalTransferForMonth,
-  getTotalExpenseForMonth,
-} = require("../tracker/tracker.service");
-const { redisClient } = require("../utilities/database");
+// const {
+//   getTotalIncomeForMonth,
+//   getTotalTransferForMonth,
+//   getTotalExpenseForMonth,
+// } = require("../tracker/tracker.service");
+// const { redisClient } = require("../utilities/database");
 
-const getDateRange = () => {
-  let start_date;
-  let end_date;
-  let months = ["01", "03", "05", "07", "08", "10", "12"];
-  let today = new Date();
-  let month = String(today.getMonth() + 1).padStart(2, "0"); //January is 0
-  let year = today.getFullYear();
-  start_date = month + "/" + "01" + "/" + year;
+// const getDateRange = () => {
+//   let start_date;
+//   let end_date;
+//   let months = ["01", "03", "05", "07", "08", "10", "12"];
+//   let today = new Date();
+//   let month = String(today.getMonth() + 1).padStart(2, "0"); //January is 0
+//   let year = today.getFullYear();
+//   start_date = month + "/" + "01" + "/" + year;
 
-  if (month === "02") {
-    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
-      end_date = month + "/" + "29" + "/" + year;
-    else end_date = month + "/" + "28" + "/" + year;
-  }
+//   if (month === "02") {
+//     if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+//       end_date = month + "/" + "29" + "/" + year;
+//     else end_date = month + "/" + "28" + "/" + year;
+//   }
 
-  if (months.includes(month)) end_date = month + "/" + "31" + "/" + year;
-  else end_date = month + "/" + "30" + "/" + year;
-  console.log(today, " ", month, " ", year, " ", start_date, " ", end_date);
+//   if (months.includes(month)) end_date = month + "/" + "31" + "/" + year;
+//   else end_date = month + "/" + "30" + "/" + year;
+//   console.log(today, " ", month, " ", year, " ", start_date, " ", end_date);
 
-  return { start_date, end_date };
-};
-const setCacheForNetMonthlyTransaction = async (user_id) => {
-  let dateObject = getDateRange();
+//   return { start_date, end_date };
+// };
+// const setCacheForNetMonthlyTransaction = async (user_id) => {
+//   let dateObject = getDateRange();
 
-  let transactionData = {
-    user_id,
-    start_date: dateObject.start_date,
-    end_date: dateObject.end_date,
+//   let transactionData = {
+//     user_id,
+//     start_date: dateObject.start_date,
+//     end_date: dateObject.end_date,
+//   };
+//   console.log(transactionData);
+//   let totalIncome = await getTotalIncomeForMonth(transactionData);
+//   let totalExpense = await getTotalExpenseForMonth(transactionData);
+//   let TotalTransfer = await getTotalTransferForMonth(transactionData);
+
+//   let cacheData = [];
+
+//   cacheData.push({
+//     name: "income",
+//     total: totalIncome.rows[0].sum,
+//   });
+//   cacheData.push({
+//     name: "expense",
+//     total: totalExpense.rows[0].sum,
+//   });
+//   cacheData.push({
+//     name: "transfer",
+//     total: TotalTransfer.rows[0].sum,
+//   });
+
+//   // caching the result
+//   let cacheDataString = JSON.stringify(cacheData);
+//   redisClient.hmset(`user${user_id}`, ["totalTransaction", cacheDataString]);
+
+//   if (
+//     totalIncome.rowCount > 0 &&
+//     totalExpense.rowCount > 0 &&
+//     TotalTransfer.rowCount > 0
+//   ) {
+//     console.log("cacheDataString :", cacheDataString);
+//     return true;
+//   } else return false;
+// };
+// // console.log(setCacheForNetMonthlyTransaction(1));
+
+const fetch = require("node-fetch");
+
+let add = async () => {
+  let metaData = {
+    id: 1,
+    title: "2nd meta",
+    date: Date(),
+    amount: 100,
   };
-  console.log(transactionData);
-  let totalIncome = await getTotalIncomeForMonth(transactionData);
-  let totalExpense = await getTotalExpenseForMonth(transactionData);
-  let TotalTransfer = await getTotalTransferForMonth(transactionData);
 
-  let cacheData = [];
+  let todo = {
+    userId: 123,
+    title: "loren impsum doloris",
+    completed: false,
+  };
 
-  cacheData.push({
-    name: "income",
-    total: totalIncome.rows[0].sum,
-  });
-  cacheData.push({
-    name: "expense",
-    total: totalExpense.rows[0].sum,
-  });
-  cacheData.push({
-    name: "transfer",
-    total: TotalTransfer.rows[0].sum,
-  });
+  console.log(metaData);
 
-  // caching the result
-  let cacheDataString = JSON.stringify(cacheData);
-  redisClient.hmset(`user${user_id}`, ["totalTransaction", cacheDataString]);
+  // try {
+  //   let response = await fetch("http://localhost:3004/event", {
+  //     method: "POST",
+  //     body: JSON.stringify(todo),
+  //     headers: { "Content-Type": "application/json" },
+  //   });
 
-  if (
-    totalIncome.rowCount > 0 &&
-    totalExpense.rowCount > 0 &&
-    TotalTransfer.rowCount > 0
-  ) {
-    console.log("cacheDataString :", cacheDataString);
-    return true;
-  } else return false;
+  //   // let response = await fetch("http://localhost:3004/event");
+  //   let data = await response.json();
+  //   console.log(data);
+  // } catch (err) {
+  //   console.log(err);
+  // }
+
+  fetch("http://localhost:3004/event", {
+    method: "POST",
+    body: JSON.stringify(metaData),
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((res) => res.json())
+    .then((json) => console.log("json:", json));
 };
-// console.log(setCacheForNetMonthlyTransaction(1));
+add();

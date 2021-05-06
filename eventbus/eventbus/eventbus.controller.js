@@ -1,8 +1,9 @@
-const fetch = require("fetch");
-
 module.exports = {
-  postTransactionMetaData: async (req, res) => {
+  addMetaData: async (req, res) => {
     // send data to the stats
-    fetch.post();
+    let metadata = req.body;
+    console.log("metadata: from controller", metadata);
+    // fetch.post();
+    return res.json({ id: 1 });
   },
 };

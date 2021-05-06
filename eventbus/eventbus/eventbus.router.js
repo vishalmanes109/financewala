@@ -1,8 +1,9 @@
 const express = require("express");
+const { addMetaData } = require("./eventbus.controller");
 const router = express.Router();
 
-router.post("/", addMetadata);
-router.post();
-router.get();
+router.post("/", addMetaData);
+// router.post();
+// router.get();
 
 module.exports = router;

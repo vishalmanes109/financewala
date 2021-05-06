@@ -1,6 +1,8 @@
 const express = require("express");
-
 const cors = require("cors");
+
+const bodyParser = require("body-parser");
+
 const eventRouter = require("./eventbus/eventbus.router");
 
 const app = express();
@@ -10,8 +12,17 @@ app.use(cors());
 
 app.use("/event", eventRouter);
 
-router.use("/evenbus");
-app = express();
-app.listen(3004, () => {
-  console.log("event bus started on port 3004");
+app.get("/api", (req, res) => {
+  return res.json({
+    name: ["vishal", "vivek", "jayesh"],
+    message: "lol",
+  });
+});
+// app.post("/event", (req, res) => {
+//   console.log(req.body);
+//   return res.send("lol");
+// });
+
+app.listen(process.env.PORT || 3004, () => {
+  console.log(" tracker server up and running 3004");
 });
