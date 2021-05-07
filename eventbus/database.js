@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 console.log("lol");
 mongoose.connect(
-  "mongodb+srv://vishal:vishal@cluster0.2xsbh.mongodb.net/financewala?retryWrites=true&w=majority",
+  "mongodb+srv://name:password@cluster0.2xsbh.mongodb.net/financewala?retryWrites=true&w=majority",
   { useNewUrlParser: true, useUnifiedTopology: true }
 );
 const db = mongoose.connection;
