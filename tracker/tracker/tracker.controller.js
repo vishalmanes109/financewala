@@ -86,7 +86,6 @@ const setCacheForRecentTransaction = async (user_id) => {
 };
 
 module.exports = {
-  setCacheForNetMonthlyTransaction,
   addTransaction: async (req, res) => {
     // ******* TODO  ********//
     // after adding data into database post request to the event bus
@@ -96,14 +95,6 @@ module.exports = {
     transactionData.title = cleaning(transactionData.title);
     transactionData.description = cleaning(transactionData.description);
     transactionData.mode_of_payment = cleaning(transactionData.mode_of_payment);
-
-    let mataData = {
-      title: transactionData.title,
-      amount: transaction.amount,
-      date: transactionData.date,
-      transaction_id,
-      mode_of_payment: transactionData.mode_of_payment,
-    };
 
     if (!isValidAmount(transactionData.amount))
       return res.status(400).json({
@@ -117,24 +108,43 @@ module.exports = {
         success: 0,
         message: "Error in query!",
       });
+
     if (result.rowCount > 0) {
       if (!setCacheForNetMonthlyTransaction(transactionData.user_id))
-        // cashinf failed the delete previous caching
+        // caching failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "totalTransaction");
       if (!setCacheForRecentTransaction(transactionData.user_id))
-        // cashinf failed the delete previous caching
+        // caching failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
-      // post this data to event bus
-      // let response = await fetch("localhost://3004/event", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json;charset=utf-8",
-      //   },
-      //   body: mataData,
-      // });
+
+      // post this data to Stats service
+      transactionData.trans_type = "ADD";
+      let statsResponse = await fetch("localhost://3003/stats", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: transactionData,
+      });
+
+      let statsResult = statsResponse.json();
+
+      if (statsResult.success != 1) {
+        // if stats service failed to recieve data post data to event bus
+        let eventResponse = await fetch("localhost://3003/event", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: transactionData,
+        });
+
+        let eventResult = eventResponse.json();
+      }
+
       return res.status(200).json({
         success: 1,
-        message: "Transaction added sucessful!",
+        message: "Transaction added sucessfully!",
       });
     }
     return res.status(400).json({
@@ -142,6 +152,8 @@ module.exports = {
       message: "transaction failed!",
     });
   },
+
+  // *********** DELETING TRANSACTION FROM TABLE
   deleteTransaction: async (req, res) => {
     let transactionData = req.body;
     // console .log(transactionData);
@@ -154,22 +166,36 @@ module.exports = {
       });
     if (result.rowCount > 0) {
       if (!setCacheForNetMonthlyTransaction(transactionData.user_id))
-        // cashinf failed the delete previous caching
+        // caching failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "totalTransaction");
       if (!setCacheForRecentTransaction(transactionData.user_id))
-        // cashinf failed the delete previous caching
+        // caching failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
 
-      // let response = await fetch(
-      //   `localhost:3004/event/${transactionData.transaction_id}`,
-      //   {
-      //     method: "DELETE",
-      //     headers: {
-      //       "Content-Type": "application/json;charset=utf-8",
-      //     },
-      //     body: mataData,
-      //   }
-      // );
+      transactionData.trans_type = "DELETE";
+      let statsResponse = await fetch("localhost://3003/stats", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: transactionData,
+      });
+
+      let statsResult = statsResponse.json();
+
+      if (statsResult.success != 1) {
+        // if stats service failed to recieve data post data to event bus
+        let eventResponse = await fetch("localhost://3003/event", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: transactionData,
+        });
+
+        let eventResult = eventResponse.json();
+      }
+
       return res.status(200).json({
         success: 1,
         message: "Transaction deleted sucessful!",
@@ -188,11 +214,6 @@ module.exports = {
     transactionData.description = cleaning(transactionData.description);
     transactionData.mode_of_payment = cleaning(transactionData.mode_of_payment);
     transactionData.attribute = cleaning(transactionData.attribute);
-
-    let mataData = {
-      title: transactionData.title,
-      transaction_id: transactionData.transaction_id,
-    };
 
     if (!isValidAmount(transactionData.amount))
       return res.status(500).json({
@@ -213,29 +234,51 @@ module.exports = {
           transactionData.attribute === "transaction_type_id") &&
         !setCacheForNetMonthlyTransaction(transactionData.user_id)
       )
-        // cashinf failed the delete previous caching
+        // caching failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "totalTransaction");
       // recent Transaction Data
       if (!setCacheForRecentTransaction(transactionData.user_id))
-        // cashinf failed the delete previous caching
+        // caching failed the delete previous caching
         redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
 
-      // let response = await fetch("localhost://3004/event", {
-      //   method: "PATCH",
-      //   headers: {
-      //     "Content-Type": "application/json;charset=utf-8",
-      //   },
-      //   body: mataData,
-      // });
+      if (
+        transactionData.attribute === "amount" ||
+        transactionData.attribute === "transaction_type_id" ||
+        transactionData.attribute === "category"
+      ) {
+        transactionData.trans_type = "UPDATE";
+        let statsResponse = await fetch("localhost://3003/stats", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: transactionData,
+        });
+
+        let statsResult = statsResponse.json();
+
+        if (statsResult.success != 1) {
+          // if stats service failed to recieve data post data to event bus
+          let eventResponse = await fetch("localhost://3003/event", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json;charset=utf-8",
+            },
+            body: transactionData,
+          });
+
+          let eventResult = eventResponse.json();
+        }
+      }
 
       return res.status(200).json({
         success: 1,
-        message: "Transaction updated sucessful!",
+        message: "Transaction updated sucessfully!",
       });
     }
     return res.status(500).json({
       success: 0,
-      message: "transaction failed!",
+      message: "transaction updation  failed!",
     });
   },
   getAllTransactionForMonth: async (req, res) => {

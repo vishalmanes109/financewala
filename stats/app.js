@@ -13,6 +13,14 @@ app.use(cors());
 
 // app.use("/stats", userRouter);
 
+app.post("/stats", (req, res) => {
+  console.log(req.body);
+  return res.status(200).json({
+    success: 1,
+    message: "data got",
+  });
+});
+
 app.get("/api", (req, res) => {
   return res.json({
     name: ["vishal", "vivek", "jayesh"],

@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
+const dotenv = require("dotenv").config({ path: __dirname + "/.env" });
 
-console.log("lol");
-mongoose.connect(
-  "mongodb+srv://name:password@cluster0.2xsbh.mongodb.net/financewala?retryWrites=true&w=majority",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+mongoose.connect(process.env.DBURL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 const db = mongoose.connection;
 db.on("connected", () => {
   console.log("connected to database");
@@ -13,6 +13,7 @@ db.on("connected", () => {
 let Schema = mongoose.Schema;
 let messageQueueScehma = new Schema({
   id: String,
+  // type => create/update
   type: String,
   body: Object,
   status: { type: String, default: "pending" },
@@ -35,7 +36,7 @@ const fun = async () => {
   console.log(result);
 };
 
-fun();
+// fun();
 // db.once("open", function () {
 //   // we're connected!
 //   console.log("connected");

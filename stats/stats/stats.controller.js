@@ -10,63 +10,75 @@ const {
 module.exports = {
   addTransactionMetaData: async (req, res) => {
     let transactionMetaData = req.body;
-    let result = await addTransacionMetaData(transactionMetaData);
-    if (result.name) {
-      return res.status(500).json({
-        success: 0,
-        message: "Error in query",
-      });
-    }
-    if (result.rowCount > 0) {
-      return res.status(200).json({
-        success: 1,
-        message: "Meta data added!",
-      });
-    }
-    return res.status(400).json({
-      success: 0,
-      message: "Invalid data",
-    });
+    console.log(transactionMetaData);
+
+    return res.status(200).json({ success: 1 });
+    // let result = await addTransacionMetaData(transactionMetaData);
+    // if (result.name) {
+    //   return res.status(500).json({
+    //     success: 0,
+    //     message: "Error in query",
+    //   });
+    // }
+    // if (result.rowCount > 0) {
+    //   return res.status(200).json({
+    //     success: 1,
+    //     message: "Meta data added!",
+    //   });
+    // }
+    // return res.status(400).json({
+    //   success: 0,
+    //   message: "Invalid data",
+    // });
   },
+
   deleteTransactionMetaData: async (req, res) => {
     let { transaction_metadata_id } = req.body.params;
-    let result = await deleteTransacionMetaData(transaction_metadata_id);
-    if (result.name) {
-      return res.status(500).json({
-        success: 0,
-        message: "Error in query",
-      });
-    }
-    if (result.rowCount > 0) {
-      return res.status(200).json({
-        success: 1,
-        message: "Meta data deleted!",
-      });
-    }
-    return res.status(400).json({
-      success: 0,
-      message: "Invalid transaction_metadata_id",
-    });
+    console.log(transaction_metadata_id);
+
+    return res.status(200).json({ success: 1 });
+
+    // let result = await deleteTransacionMetaData(transaction_metadata_id);
+    // if (result.name) {
+    //   return res.status(500).json({
+    //     success: 0,
+    //     message: "Error in query",
+    //   });
+    // }
+    // if (result.rowCount > 0) {
+    //   return res.status(200).json({
+    //     success: 1,
+    //     message: "Meta data deleted!",
+    //   });
+    // }
+    // return res.status(400).json({
+    //   success: 0,
+    //   message: "Invalid transaction_metadata_id",
+    // });
   },
   updateTransactionMetaData: async (req, res) => {
     let transactionMetaData = req.body;
-    let result = await updateTransacionMetaData(transactionMetaData);
-    if (result.name) {
-      return res.status(500).json({
-        success: 0,
-        message: "Error in query",
-      });
-    }
-    if (result.rowCount > 0) {
-      return res.status(200).json({
-        success: 1,
-        message: "Meta data updated!",
-      });
-    }
-    return res.status(400).json({
-      success: 0,
-      message: "Invalid data",
-    });
+    console.log(transactionMetaData);
+
+    return res.status(200).json({ success: 1 });
+
+    // let result = await updateTransacionMetaData(transactionMetaData);
+    // if (result.name) {
+    //   return res.status(500).json({
+    //     success: 0,
+    //     message: "Error in query",
+    //   });
+    // }
+    // if (result.rowCount > 0) {
+    //   return res.status(200).json({
+    //     success: 1,
+    //     message: "Meta data updated!",
+    //   });
+    // }
+    // return res.status(400).json({
+    //   success: 0,
+    //   message: "Invalid data",
+    // });
   },
 
   getDifferentCharts: async (req, res) => {
