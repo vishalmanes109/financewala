@@ -1,6 +1,5 @@
 const fetch = require("node-fetch");
 const dotenv = require("dotenv").config({ path: __dirname + "/.env" });
-
 const { saveDataInDB, deleteData, getData } = require("./eventbus.service");
 
 module.exports = {
@@ -8,9 +7,10 @@ module.exports = {
     // send data to the stats
 
     let metadata = req.body;
-    console.log("metadata: from event controller", metadata);
+    console.log("metadata: from event bus controller", metadata);
 
     let result = await saveDataInDB(metadata);
+    console.log("result: in controller", result);
     if (result.error) {
       return res.status(500).json({
         success: 0,
@@ -20,7 +20,6 @@ module.exports = {
       return res.status(200).json({
         success: 1,
         message: "Storing data into messageQueue successful",
-        res,
       });
     }
   },

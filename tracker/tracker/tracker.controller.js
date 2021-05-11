@@ -10,7 +10,9 @@ const {
 } = require("./tracker.service");
 
 const { nanoid } = require("nanoid/async");
+
 const { redisClient } = require("../utilities/database");
+const fetch = require("node-fetch");
 const { cleaning, isValidAmount } = require("../utilities/validator");
 
 const getDateRange = () => {
@@ -119,24 +121,26 @@ module.exports = {
 
       // post this data to Stats service
       transactionData.trans_type = "ADD";
-      let statsResponse = await fetch("localhost://3003/stats", {
+      console.log(transactionData);
+      let statsResponse = await fetch("http://localhost:3003/stats", {
         method: "POST",
         headers: {
           "Content-Type": "application/json;charset=utf-8",
         },
-        body: transactionData,
+        body: JSON.stringify(transactionData),
       });
 
-      let statsResult = statsResponse.json();
+      let statsResult = await statsResponse.json();
+      console.log("stats result", statsResult);
 
       if (statsResult.success != 1) {
         // if stats service failed to recieve data post data to event bus
-        let eventResponse = await fetch("localhost://3003/event", {
+        let eventResponse = await fetch("http://localhost:3004/event", {
           method: "POST",
           headers: {
             "Content-Type": "application/json;charset=utf-8",
           },
-          body: transactionData,
+          body: JSON.stringify(transactionData),
         });
 
         let eventResult = eventResponse.json();

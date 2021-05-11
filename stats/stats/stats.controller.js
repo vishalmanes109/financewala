@@ -8,9 +8,33 @@ const {
 } = require("./stats.service");
 
 module.exports = {
+  addMissedData: async (dataList) => {
+    console.log("in stats :", dataList);
+
+    return 1;
+    // let result = await addTransacionMetaData(transactionMetaData);
+    // if (result.name) {
+    //   return res.status(500).json({
+    //     success: 0,
+    //     message: "Error in query",
+    //   });
+    // }
+    // if (result.rowCount > 0) {
+    //   return res.status(200).json({
+    //     success: 1,
+    //     message: "Meta data added!",
+    //   });
+
+    // }
+    // return res.status(400).json({
+    //   success: 0,
+    //   message: "Invalid data",
+    // });
+  },
+
   addTransactionMetaData: async (req, res) => {
     let transactionMetaData = req.body;
-    console.log(transactionMetaData);
+    console.log("in stats :", transactionMetaData);
 
     return res.status(200).json({ success: 1 });
     // let result = await addTransacionMetaData(transactionMetaData);
@@ -25,6 +49,7 @@ module.exports = {
     //     success: 1,
     //     message: "Meta data added!",
     //   });
+
     // }
     // return res.status(400).json({
     //   success: 0,
