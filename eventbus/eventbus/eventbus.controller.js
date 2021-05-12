@@ -45,18 +45,16 @@ module.exports = {
   getMetaData: async (req, res) => {
     // send data to the stats
 
-    console.log("metadata: from controller", metadata);
-
-    let result = await getData(data_id);
+    let result = await getData();
     if (result.error) {
       return res.status(500).json({
         success: 0,
-        message: "deletion failed!",
+        message: "No Data found!",
       });
     } else {
       return res.status(200).json({
         success: 1,
-        message: "deletion successful",
+        data: result,
       });
     }
   },

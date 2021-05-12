@@ -28,7 +28,7 @@ data = {
 };
 let messageQ = mongoose.model("messageQueue", messageQueueScehma);
 
-module.exports = messageQ;
+module.exports = mongoDB;
 
 const fun = async () => {
   console.log("in func");

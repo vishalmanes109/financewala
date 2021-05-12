@@ -44,3 +44,63 @@ id serial primary key,
 type varchar not null
 );
 
+--  *************** insert transactions dummy**************** -- 
+INSERT INTO public.transaction(
+	id, title, description, amount, date,
+	mode_of_payment, essential, category_id, currency_id,
+	transaction_type_id, user_id)
+	VALUES ('4', 'home emi', 'this month home emi ', 15000, now(),
+			'debit', 1,  9 ,5 , 2,1);
+
+
+INSERT INTO public.transaction(
+	id, title, description, amount, date,
+	mode_of_payment, essential, category_id, currency_id,
+	transaction_type_id, user_id)
+	VALUES ('5', 'travel', 'travel to home', 8000, now(),
+			'debit', 1,  23 ,5 , 2,1);
+
+
+INSERT INTO public.transaction(
+	id, title, description, amount, date,
+	mode_of_payment, essential, category_id, currency_id,
+	transaction_type_id, user_id)
+	VALUES ('6', 'grooming', 'grmming hair prodo', 1000, now(),
+			'credit', 1,  17 ,5 , 2,1);
+			
+
+INSERT INTO public.transaction(
+	id, title, description, amount, date,
+	mode_of_payment, essential, category_id, currency_id,
+	transaction_type_id, user_id)
+	VALUES ('7', 'bill', 'internet bill', 500, now(),
+			'credit', 1,  13 ,5 , 2,1);
+			
+
+	INSERT INTO public.transaction(
+		id, title, description, amount, date,
+		mode_of_payment, essential, category_id, currency_id,
+		transaction_type_id, user_id)
+		VALUES ('8', 'stock', 'invested bill', 5000, now(),
+				'debit', -1,  28 ,5 , 3,1);
+
+	
+
+	INSERT INTO public.transaction(
+		id, title, description, amount, date,
+		mode_of_payment, essential, category_id, currency_id,
+		transaction_type_id, user_id)
+		VALUES ('9', 'retire', 'retire plan', 5000, now(),
+				'debit', -1,  29 ,5 , 3,1);
+
+				
+	INSERT INTO public.transaction(
+		id, title, description, amount, date,
+		mode_of_payment, essential, category_id, currency_id,
+		transaction_type_id, user_id)
+		VALUES ('10', 'health', 'health plan', 5000, now(),
+				'debit', -1,  31 ,5 , 3,1);
+
+				
+
+
