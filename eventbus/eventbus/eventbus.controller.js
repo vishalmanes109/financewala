@@ -45,7 +45,7 @@ module.exports = {
     let result = await getData();
     let data = 0;
     if (result.length !== 0) {
-      data = resut.data;
+      data = result.data;
     }
     console.log("result in controller:", result);
 

@@ -53,3 +53,25 @@ insert into category(id,name,transaction_type_id) values(7,'gifts',1);
 insert into category(id,name,transaction_type_id) values(8,'grocery',2);
 insert into category(id,name,transaction_type_id) values(9,'home rent/emi',2);
 
+--  ***************** insert into trans_metadata
+INSERT INTO public.trans_metadata(
+	id, title, amount, date,
+	mode_of_payment, essential, category_id,
+	transaction_type_id, user_id)
+	VALUES ('1', 'home emi', 15000, now(),
+			'debit', 1,  9 , 2,1);
+			
+
+INSERT INTO public.trans_metadata(
+	id, title, amount, date,
+	mode_of_payment, essential, category_id,
+	transaction_type_id, user_id)
+	VALUES ('2', 'salary ', 50000, now(),
+			-1, 1,  1 , 1,1);
+
+INSERT INTO public.trans_metadata(
+	id, title, amount, date,
+	mode_of_payment, essential, category_id,
+	transaction_type_id, user_id)
+	VALUES ('3', 'send to friends', 5000, now(),
+			'debit', 0,  1 , 3,1);

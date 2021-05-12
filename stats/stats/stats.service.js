@@ -1,4 +1,3 @@
-const e = require("express");
 const { pool } = require("../utilities/database");
 module.exports = {
   addTransacionMetaData: async (transactionMetaData) => {
@@ -80,21 +79,64 @@ module.exports = {
       return err;
     }
   },
-  getPieChart: async (transactionMetaData) => {
+  getPieChart: async (user_id, filter) => {
     try {
-    } catch (err) {}
+      let result;
+
+      if (filter === "mode_of_payment")
+        result = await pool.query(
+          `select mode_of_payment,sum(amount) as total  from trans_metadata where user_id=$1 group by mode_of_payment ;`,
+          [user_id]
+        );
+      if (filter === "transaction_type")
+        result = await pool.query(
+          `select transaction_type.type,sum(trans_metadata.amount) as total  from trans_metadata,transaction_type where user_id=$1 and transaction_type_id=transaction_type.id group by transaction_type.type ; `,
+          [user_id]
+        );
+
+      if (filter === "essential")
+        result = await pool.query(
+          `select essential,sum(amount) as total from trans_metadata where user_id=$1 group by essential ;`,
+          [user_id]
+        );
+
+      if (filter === "category") result = await pool.query(``, [user_id]);
+      console.log(result);
+      return result;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   },
-  getHeatMap: async (transactionMetaData) => {
+  getHeatMap: async (user_id, filter) => {
     try {
-    } catch (err) {}
+      let result = await pool.query(``, [user_id]);
+      console.log(result);
+      return result;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   },
-  getBarGraph: async (transactionMetaData) => {
+  getBarGraph: async (user_id, filter) => {
     try {
-    } catch (err) {}
+      let result = await pool.query(``, [user_id]);
+      console.log(result);
+      return result;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   },
-  getTransactionMetaByAttribute: async (transactionMetaData) => {
+  getTransactionMetaByAttribute: async (transactionData) => {
     try {
-    } catch (err) {}
+      let result = await pool.query(``, []);
+      console.log(result);
+      return result;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   },
   addBulkTransMetaData: async (transactionMetaData) => {
     try {

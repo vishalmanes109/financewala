@@ -112,12 +112,12 @@ module.exports = {
   },
 
   getDifferentCharts: async (req, res) => {
-    let { user_id, chart } = req.body.params;
+    let { user_id, chart, filter } = req.body.params;
     // let { chart } = req.body.params;
     let result;
-    if (chart === "pie") result = await getPieChart(user_id);
-    else if (result === "heatmap") result = await getHeatMap(user_id);
-    else if (result === "bar") result = await getBarGraph(user_id);
+    if (chart === "pie") result = await getPieChart(user_id, filter);
+    else if (result === "heatmap") result = await getHeatMap(user_id, filter);
+    else if (result === "bar") result = await getBarGraph(user_id, filter);
 
     if (result.name) {
       return res.status(500).json({

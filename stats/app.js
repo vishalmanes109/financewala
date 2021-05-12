@@ -22,7 +22,7 @@ app.post("/stats", (req, res) => {
   });
 });
 
-app.get("/api", (req, res) => {
+app.get("/stats", (req, res) => {
   return res.json({
     name: ["vishal", "vivek", "jayesh"],
     message: "lol",
@@ -33,17 +33,22 @@ app.listen(process.env.PORT || 3003, async () => {
   console.log("stats server up and running on 3003");
 
   // get the missed metadata from event bus
+  try {
+    let result = await fetch("http://localhost:3004/event/");
+    let allData = await result.json();
+    console.log(allData);
+    if (allData.data === 0) {
+      console.log("no missed adata found");
+      return;
+    }
 
-  let result = await fetch("http://localhost:3004/event/all");
-  let allData = await result.json();
-  console.log(allData);
-  if (allData.data === 0) {
-    console.log("no missed adata found");
-    return;
+    // once got all data save that data int database
+
+    let missedDataResult = await addMissedData(allData);
+    if (missedDataResult == 1) console.log("missed data foud and added");
+    else
+      console.log("adding missed data failed notify admin for manual adding");
+  } catch (err) {
+    console.log(err);
   }
-  // once got all data save that data int database
-
-  let missedDataResult = await addMissedData(allData);
-  if (missedDataResult == 1) console.log("missed data foud and added");
-  else console.log("adding missed data failed notify admin for manual adding");
 });
