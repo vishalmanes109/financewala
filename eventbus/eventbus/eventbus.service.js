@@ -16,14 +16,26 @@ module.exports = {
       };
     }
   },
-  deleteData: async (transaction_id) => {},
-  getData: async () => {
+  deleteData: async () => {
     try {
-      let result = await mongoDB.find({});
-      console.log(result);
+      console.log("from service deletion");
+      let result = await mongoDB.remove({});
+      console.log("from servicereult:", result);
       return result;
     } catch (err) {
       console.log(err);
+      return { error: true, err };
+    }
+  },
+  getData: async () => {
+    try {
+      console.log("iside try service");
+      let result = await mongoDB.find({});
+      console.log("result from service:", result);
+      console.log("end of result fron service");
+      return result;
+    } catch (err) {
+      console.log("err from service:", err);
       return {
         error: true,
         err,

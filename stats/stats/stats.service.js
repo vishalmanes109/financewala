@@ -96,4 +96,29 @@ module.exports = {
     try {
     } catch (err) {}
   },
+  addBulkTransMetaData: async (transactionMetaData) => {
+    try {
+      let result = await pool.query(
+        `insert into trans_metadata 
+      (id,title,amount,date,mode_of_payment,essential,category_id,transaction_type_id,user_id) 
+      values($1,$2,$3,$4,$5,$6,$7,$8,$9) `,
+        [
+          transactionMetaData.id,
+          transactionMetaData.title,
+          transactionMetaData.amount,
+          transactionMetaData.date,
+          transactionMetaData.mode_of_payment,
+          transactionMetaData.essential,
+          transactionMetaData.category_id,
+          transactionMetaData.transaction_type_id,
+          transactionMetaData.user_id,
+        ]
+      );
+      console.log(result);
+      return 1;
+    } catch (err) {
+      console.log(err);
+      return 0;
+    }
+  },
 };

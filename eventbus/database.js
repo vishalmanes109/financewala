@@ -26,7 +26,7 @@ data = {
   // type: "metadata",
   body: { id: 1, title: "salary" },
 };
-let messageQ = mongoose.model("messageQueue", messageQueueScehma);
+let mongoDB = mongoose.model("messageQueue", messageQueueScehma);
 
 module.exports = mongoDB;
 

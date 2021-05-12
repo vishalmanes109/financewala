@@ -37,10 +37,13 @@ app.listen(process.env.PORT || 3003, async () => {
   let result = await fetch("http://localhost:3004/event/all");
   let allData = await result.json();
   console.log(allData);
-
+  if (allData.data === 0) {
+    console.log("no missed adata found");
+    return;
+  }
   // once got all data save that data int database
 
   let missedDataResult = await addMissedData(allData);
   if (missedDataResult == 1) console.log("missed data foud and added");
-  else console.log("no missed data so far");
+  else console.log("adding missed data failed notify admin for manual adding");
 });

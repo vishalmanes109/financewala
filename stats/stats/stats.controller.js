@@ -5,14 +5,19 @@ const {
   getPieChart,
   getHeatMap,
   getBarGraph,
+  addBulkTransMetaData,
 } = require("./stats.service");
 
 module.exports = {
   addMissedData: async (dataList) => {
     console.log("in stats :", dataList);
-    // convert datalist into array
 
-    return 1;
+    let resultaArray = [];
+    for (let i = 0; i < dataList.length; i++) {
+      resultaArray.push(await addBulkTransMetaData(dataList[i]));
+    }
+    if (resultaArray.contains(0)) return 0;
+    else return 1;
     // let result = await addTransacionMetaData(transactionMetaData);
     // if (result.name) {
     //   return res.status(500).json({

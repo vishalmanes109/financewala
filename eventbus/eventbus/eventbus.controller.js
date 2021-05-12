@@ -24,12 +24,9 @@ module.exports = {
     }
   },
   deleteMetaData: async (req, res) => {
-    // send data to the stats
-
-    let data_id = req.params.data_id;
-    console.log("metadata: from controller", metadata);
-
-    let result = await deleteData(data_id);
+    console.log("fro controller deletion");
+    let result = await deleteData();
+    console.log("frm controller result:", result);
     if (result.error) {
       return res.status(500).json({
         success: 0,
@@ -44,8 +41,14 @@ module.exports = {
   },
   getMetaData: async (req, res) => {
     // send data to the stats
-
+    console.log("inside getadata controller");
     let result = await getData();
+    let data = 0;
+    if (result.length !== 0) {
+      data = resut.data;
+    }
+    console.log("result in controller:", result);
+
     if (result.error) {
       return res.status(500).json({
         success: 0,
@@ -54,7 +57,7 @@ module.exports = {
     } else {
       return res.status(200).json({
         success: 1,
-        data: result,
+        data,
       });
     }
   },
