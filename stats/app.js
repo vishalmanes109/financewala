@@ -12,15 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// app.use("/stats", statsRouter);
-
-app.post("/stats", (req, res) => {
-  console.log("from stats :", req.body);
-  return res.status(200).json({
-    success: 0,
-    message: "data got",
-  });
-});
+app.use("/stats", statsRouter);
 
 app.get("/stats", (req, res) => {
   return res.json({

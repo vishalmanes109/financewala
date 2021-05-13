@@ -85,12 +85,15 @@ module.exports = {
 
       if (filter === "mode_of_payment")
         result = await pool.query(
-          `select mode_of_payment,sum(amount) as total  from trans_metadata where user_id=$1 group by mode_of_payment ;`,
+          `select mode_of_payment,sum(amount) as total 
+           from trans_metadata where user_id=$1 group by mode_of_payment ;`,
           [user_id]
         );
       if (filter === "transaction_type")
         result = await pool.query(
-          `select transaction_type.type,sum(trans_metadata.amount) as total  from trans_metadata,transaction_type where user_id=$1 and transaction_type_id=transaction_type.id group by transaction_type.type ; `,
+          `select transaction_type.type,sum(trans_metadata.amount) as total 
+           from trans_metadata,transaction_type where user_id=$1 and transaction_type_id=transaction_type.id 
+           group by transaction_type.type ; `,
           [user_id]
         );
 
@@ -110,7 +113,35 @@ module.exports = {
   },
   getHeatMap: async (user_id, filter) => {
     try {
-      let result = await pool.query(``, [user_id]);
+      let result;
+      if (filter === "expense")
+        result = await pool.query(
+          ` select date_trunc('day', date) as day,date_trunc('month', date) as month,date_trunc('month', date) as year, count(amount) as daily_activity
+        from transaction where user_id=$1 and transaction_type_id=2
+        group by day,month,year;`,
+          [user_id]
+        );
+      if (filter === "transfer")
+        result = await pool.query(
+          ` select date_trunc('day', date) as day,date_trunc('month', date) as month,date_trunc('month', date) as year, count(amount) as daily_activity
+        from transaction where user_id=$1 and transaction_type_id=3
+        group by day,month,year;`,
+          [user_id]
+        );
+      if (filter === "income")
+        result = await pool.query(
+          ` select date_trunc('day', date) as day,date_trunc('month', date) as month,date_trunc('month', date) as year, count(amount) as daily_activity
+        from transaction where user_id=$1 and transaction_type_id=1
+        group by day,month,year;`,
+          [user_id]
+        );
+      if (filter === "all")
+        result = await pool.query(
+          ` select date_trunc('day', date) as day,date_trunc('month', date) as month,date_trunc('month', date) as year, count(amount) as daily_activity
+        from transaction where user_id=$1 
+        group by day,month,year;`,
+          [user_id]
+        );
       console.log(result);
       return result;
     } catch (err) {
@@ -120,7 +151,39 @@ module.exports = {
   },
   getBarGraph: async (user_id, filter) => {
     try {
-      let result = await pool.query(``, [user_id]);
+      let result;
+      if (filter === "total_transactions")
+        result = await pool.query(
+          `select date_trunc('month', date) as month,date_trunc('year', date) as year, sum(amount) as monthly_sum
+          from transaction where user_id=$1
+          group by  month,year;`,
+          [user_id]
+        );
+
+      if (filter === "expense")
+        result = await pool.query(
+          `select date_trunc('month', date) as month,date_trunc('year', date) as year, sum(amount) as monthly_sum
+          from transaction where user_id=$1 and transaction_type_id=2
+          group by month,year;`,
+          [user_id]
+        );
+
+      if (filter === "income")
+        result = await pool.query(
+          `select date_trunc('month', date) as month,date_trunc('year', date) as year, sum(amount) as monthly_sum 
+          from transaction where user_id=$1 and transaction_type_id=1 
+          group by month,year;`,
+          [user_id]
+        );
+
+      if (filter === "transfer")
+        result = await pool.query(
+          `select date_trunc('month', date) as month,date_trunc('year', date) as year, sum(amount) as monthly_sum 
+          from transaction where user_id=$1 and transaction_type_id=3 
+          group by month,year;`,
+          [user_id]
+        );
+
       console.log(result);
       return result;
     } catch (err) {

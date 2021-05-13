@@ -112,8 +112,9 @@ module.exports = {
   },
 
   getDifferentCharts: async (req, res) => {
-    let { user_id, chart, filter } = req.body.params;
+    let { user_id, chart, filter } = req.query;
     // let { chart } = req.body.params;
+    console.log(user_id, chart, filter);
     let result;
     if (chart === "pie") result = await getPieChart(user_id, filter);
     else if (result === "heatmap") result = await getHeatMap(user_id, filter);

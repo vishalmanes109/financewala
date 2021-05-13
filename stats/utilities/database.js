@@ -8,20 +8,7 @@ const pool = new Pool({
   host: "localhost" || process.env.DB_HOST,
   user: "postgres" || process.env.PGUSER,
   password: "123" || process.env.PGDB_PASS,
-  database: "statServices" || process.env.MYSQL_DB,
+  database: "statService" || process.env.MYSQL_DB,
 });
-
-// const pool = new Pool({
-//   connectionString:
-//     "postgres://vowjprxwkhzrex:2c9df496ecb601f8c15d7863b5391b17e181f7dffff7c38608f968b864a4638c@ec2-34-225-167-77.compute-1.amazonaws.com:5432/d2u2ls60ekirmm",
-//   ssl: {
-//     rejectUnauthorized: false,
-//   },
-// });
-
-// pool.query(`select * from user_i`, (res, err) => {
-//   console.log(res);
-//   console.log(err);
-// });
 
 module.exports = { pool, redisClient };
