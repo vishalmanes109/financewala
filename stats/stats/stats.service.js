@@ -117,28 +117,28 @@ module.exports = {
       if (filter === "expense")
         result = await pool.query(
           ` select date_trunc('day', date) as day,date_trunc('month', date) as month,date_trunc('month', date) as year, count(amount) as daily_activity
-        from transaction where user_id=$1 and transaction_type_id=2
+        from trans_metadata where user_id=$1 and transaction_type_id=2
         group by day,month,year;`,
           [user_id]
         );
       if (filter === "transfer")
         result = await pool.query(
           ` select date_trunc('day', date) as day,date_trunc('month', date) as month,date_trunc('month', date) as year, count(amount) as daily_activity
-        from transaction where user_id=$1 and transaction_type_id=3
+        from trans_metadata where user_id=$1 and transaction_type_id=3
         group by day,month,year;`,
           [user_id]
         );
       if (filter === "income")
         result = await pool.query(
           ` select date_trunc('day', date) as day,date_trunc('month', date) as month,date_trunc('month', date) as year, count(amount) as daily_activity
-        from transaction where user_id=$1 and transaction_type_id=1
+        from trans_metadata where user_id=$1 and transaction_type_id=1
         group by day,month,year;`,
           [user_id]
         );
       if (filter === "all")
         result = await pool.query(
           ` select date_trunc('day', date) as day,date_trunc('month', date) as month,date_trunc('month', date) as year, count(amount) as daily_activity
-        from transaction where user_id=$1 
+        from trans_metadata where user_id=$1 
         group by day,month,year;`,
           [user_id]
         );
@@ -151,11 +151,12 @@ module.exports = {
   },
   getBarGraph: async (user_id, filter) => {
     try {
+      console.log(user_id, filter);
       let result;
-      if (filter === "total_transactions")
+      if (filter === "all")
         result = await pool.query(
           `select date_trunc('month', date) as month,date_trunc('year', date) as year, sum(amount) as monthly_sum
-          from transaction where user_id=$1
+          from trans_metadata where user_id=$1
           group by  month,year;`,
           [user_id]
         );
@@ -163,7 +164,7 @@ module.exports = {
       if (filter === "expense")
         result = await pool.query(
           `select date_trunc('month', date) as month,date_trunc('year', date) as year, sum(amount) as monthly_sum
-          from transaction where user_id=$1 and transaction_type_id=2
+          from trans_metadata where user_id=$1 and transaction_type_id=2
           group by month,year;`,
           [user_id]
         );
@@ -171,7 +172,7 @@ module.exports = {
       if (filter === "income")
         result = await pool.query(
           `select date_trunc('month', date) as month,date_trunc('year', date) as year, sum(amount) as monthly_sum 
-          from transaction where user_id=$1 and transaction_type_id=1 
+          from trans_metadata where user_id=$1 and transaction_type_id=1 
           group by month,year;`,
           [user_id]
         );
@@ -179,7 +180,7 @@ module.exports = {
       if (filter === "transfer")
         result = await pool.query(
           `select date_trunc('month', date) as month,date_trunc('year', date) as year, sum(amount) as monthly_sum 
-          from transaction where user_id=$1 and transaction_type_id=3 
+          from trans_metadata where user_id=$1 and transaction_type_id=3 
           group by month,year;`,
           [user_id]
         );
