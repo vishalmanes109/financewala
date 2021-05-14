@@ -27,5 +27,8 @@ router.get(
 );
 router.post("/", addTransaction);
 router.patch("/", updateTransaction);
-router.delete("/", deleteTransaction);
+router.delete(
+  "/transaction_id/:transaction_id/user_id/:user_id",
+  deleteTransaction
+);
 module.exports = router;

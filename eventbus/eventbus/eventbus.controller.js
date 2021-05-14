@@ -57,10 +57,7 @@ module.exports = {
     console.log("inside getadata controller");
     try {
       let result = await getData();
-      let data = 0;
-      if (result.length !== 0) {
-        data = result.data;
-      }
+
       console.log("result in controller:", result);
 
       if (result.error) {
@@ -71,7 +68,7 @@ module.exports = {
       } else {
         return res.status(200).json({
           success: 1,
-          data,
+          data: result,
         });
       }
     } catch (err) {

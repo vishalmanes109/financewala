@@ -165,10 +165,18 @@ module.exports = {
 
   // *********** DELETING TRANSACTION FROM TABLE
   deleteTransaction: async (req, res) => {
-    let transactionData = req.body;
-    // console .log(transactionData);
+    let { transaction_id, user_id } = req.params;
+    let transactionData = {
+      transaction_id,
+      user_id,
+    };
+    console.log(
+      "from tracker controller deletion of statrted",
+      transactionData
+    );
+
     try {
-      let result = await deleteTransaction(transactionData);
+      let result = await deleteTransaction(transaction_id);
       if (result.name)
         return res.status(500).json({
           success: 0,
@@ -177,30 +185,39 @@ module.exports = {
       if (result.rowCount > 0) {
         if (!setCacheForNetMonthlyTransaction(transactionData.user_id))
           // caching failed the delete previous caching
-          redisClient.HDEL(`user${transaction.user_id}`, "totalTransaction");
+          redisClient.HDEL(
+            `user${transactionData.user_id}`,
+            "totalTransaction"
+          );
         if (!setCacheForRecentTransaction(transactionData.user_id))
           // caching failed the delete previous caching
-          redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
+          redisClient.HDEL(
+            `user${transactionData.user_id}`,
+            "recentTransaction"
+          );
 
         transactionData.trans_type = "DELETE";
-        let statsResponse = await fetch("localhost://3003/stats", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: transactionData,
-        });
+        let statsResponse = await fetch(
+          `http://localhost:3003/stats/transaction_id/${transactionData.transaction_id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify(transactionData),
+          }
+        );
 
         let statsResult = statsResponse.json();
 
         if (statsResult.success != 1) {
           // if stats service failed to recieve data post data to event bus
-          let eventResponse = await fetch("localhost://3003/event", {
+          let eventResponse = await fetch("http://localhost:3004/event", {
             method: "POST",
             headers: {
               "Content-Type": "application/json;charset=utf-8",
             },
-            body: transactionData,
+            body: JSON.stringify(transactionData),
           });
 
           let eventResult = eventResponse.json();
@@ -216,6 +233,7 @@ module.exports = {
         message: "transaction id does not exist",
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).json({
         success: 0,
         message: "Server Error!",
@@ -405,8 +423,11 @@ module.exports = {
   },
 
   getTransactionByAttribute: async (req, res) => {
-    let transactionData = req.body;
-    transactionData.id = await nanoid(10);
+    let { user_id, attribute } = req.query;
+    transactionData = {
+      user_id,
+      attribute,
+    };
     // console.log(transactionData);
     try {
       let result = await getTransactionByAttribute(transactionData);

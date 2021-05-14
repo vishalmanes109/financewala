@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 
 const fetch = require("node-fetch");
 const statsRouter = require("./stats/stats.router");
-const { addMissedData } = require("./stats/stats.controller");
+const { manageMissedData } = require("./stats/stats.controller");
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.listen(process.env.PORT || 3003, async () => {
   try {
     let result = await fetch("http://localhost:3004/event/");
     let allData = await result.json();
-    console.log(allData);
+    // console.log("allData", allData);
     if (allData.data === 0) {
       console.log("no missed adata found");
       return;
@@ -36,7 +36,7 @@ app.listen(process.env.PORT || 3003, async () => {
 
     // once got all data save that data int database
 
-    let missedDataResult = await addMissedData(allData);
+    let missedDataResult = await manageMissedData(allData);
     if (missedDataResult == 1) console.log("missed data foud and added");
     else
       console.log("adding missed data failed notify admin for manual adding");

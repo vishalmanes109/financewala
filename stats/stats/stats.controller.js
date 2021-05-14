@@ -9,14 +9,24 @@ const {
 } = require("./stats.service");
 
 module.exports = {
-  addMissedData: async (dataList) => {
+  manageMissedData: async (dataList) => {
     console.log("in stats :", dataList);
 
-    let resultaArray = [];
+    let resultArray = [];
     for (let i = 0; i < dataList.length; i++) {
-      resultaArray.push(await addBulkTransMetaData(dataList[i]));
+      if (dataList[i].body.trans_type === "DELETE") {
+        // delete bulk meta data
+        // await resultArray.push(await addBulkTransMetaData(dataList[i]));
+      } else if (dataList[i].body.trans_type === "ADD") {
+        // add missing data
+        // await resultArray.push(await addBulkTransMetaData(dataList[i]));
+      } else if (dataList[i].body.trans_type === "UPDATE") {
+        // add missing data
+        // await resultArray.push(await addBulkTransMetaData(dataList[i]));
+      }
     }
-    if (resultaArray.contains(0)) return 0;
+    console.log("resultaArray", resultArray);
+    if (resultArray.includes(0)) return 0;
     else return 1;
     // let result = await addTransacionMetaData(transactionMetaData);
     // if (result.name) {
@@ -71,35 +81,35 @@ module.exports = {
   },
 
   deleteTransactionMetaData: async (req, res) => {
-    let { transaction_id } = req.body.params;
-    console.log(transaction_metadata_id);
+    let { transaction_id } = req.params;
+    console.log("from stats controller deleting data of", transaction_id);
 
-    // return res.status(200).json({ success: 1 });
-    try {
-      let result = await deleteTransacionMetaData(transaction_id);
-      if (result.name) {
-        return res.status(500).json({
-          success: 0,
-          message: "Error in query",
-        });
-      }
-      if (result.rowCount > 0) {
-        return res.status(200).json({
-          success: 1,
-          message: "Meta data deleted!",
-        });
-      }
-      return res.status(400).json({
-        success: 0,
-        message: "Invalid transaction_id",
-      });
-    } catch (err) {
-      return res.status(500).json({
-        success: 0,
-        message: "Server error",
-        err,
-      });
-    }
+    return res.status(200).json({ success: 1 });
+    // try {
+    //   let result = await deleteTransacionMetaData(transaction_id);
+    //   if (result.name) {
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Error in query",
+    //     });
+    //   }
+    //   if (result.rowCount > 0) {
+    //     return res.status(200).json({
+    //       success: 1,
+    //       message: "Meta data deleted!",
+    //     });
+    //   }
+    //   return res.status(400).json({
+    //     success: 0,
+    //     message: "Invalid transaction_id",
+    //   });
+    // } catch (err) {
+    //   return res.status(500).json({
+    //     success: 0,
+    //     message: "Server error",
+    //     err,
+    //   });
+    // }
   },
   updateTransactionMetaData: async (req, res) => {
     let transactionMetaData = req.body;

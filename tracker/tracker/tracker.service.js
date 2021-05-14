@@ -34,16 +34,15 @@ module.exports = {
   },
   // ----------- ADD TRANSACTION  DONE--------//
 
-  deleteTransaction: async (transactionData) => {
+  deleteTransaction: async (transaction_id) => {
     try {
-      let result = await pool.query(
-        `delete from transaction where id=$1 and user_id=$2`,
-        [transactionData.id, transactionData.user_id]
-      );
-      // console .log(result);
+      let result = await pool.query(`delete from transaction where id=$1`, [
+        transaction_id,
+      ]);
+      console.log(result);
       return result;
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       return err;
     }
   },

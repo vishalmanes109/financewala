@@ -25,5 +25,5 @@ app.get("/api", (req, res) => {
 // });
 
 app.listen(process.env.PORT || 3004, () => {
-  console.log(" tracker server up and running 3004");
+  console.log(" event server up and running 3004");
 });

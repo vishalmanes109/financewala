@@ -241,7 +241,7 @@ module.exports = {
   },
   updateUser: async (req, res) => {
     let userData = req.body;
-    console.log(userData.length);
+    console.log(userData);
     // check for the req.body has data to update
     if (userData.constructor === Object && Object.keys(userData).length === 0)
       return res.status(500).json({

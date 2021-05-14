@@ -58,25 +58,23 @@ module.exports = {
           `update user_i set password= $1 where id=$2`,
           [userData.password, userData.id]
         );
-      }
-      if (userData.attribute === "theme") {
+      } else if (userData.attribute === "theme") {
         result = await pool.query(`update  user_i set theme= $1 where id= $2`, [
           userData.theme,
           userData.id,
         ]);
-      }
-      if (userData.attribute === "avatar") {
+      } else if (userData.attribute === "avatar") {
         result = await pool.query(
           ` update  user_i set avatar = $1 where id=$2`,
           [userData.avatar, userData.id]
         );
-      }
-      if (userData.attribute === "currency_id") {
+      } else if (userData.attribute === "currency_id") {
         result = await pool.query(
           ` update  user_i set currency_id = $1 where id=$2`,
           [userData.currency_id, userData.id]
         );
-      }
+      } else result = {};
+
       // console.log(result);
       return result;
     } catch (err) {
