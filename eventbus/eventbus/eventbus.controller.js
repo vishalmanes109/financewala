@@ -14,12 +14,13 @@ module.exports = {
       if (result.error) {
         return res.status(500).json({
           success: 0,
-          message: "Storing data into messageQueue failed!",
+          message: "Storing data  failed!",
         });
       } else {
+        console.log("data sored ib evntbus");
         return res.status(200).json({
           success: 1,
-          message: "Storing data into messageQueue successful",
+          message: "Storing data  successful",
         });
       }
     } catch (err) {

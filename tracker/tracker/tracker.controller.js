@@ -122,18 +122,25 @@ module.exports = {
         // post this data to Stats service
         transactionData.trans_type = "ADD";
         console.log(transactionData);
-        let statsResponse = await fetch("http://localhost:3003/stats", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify(transactionData),
-        });
+        let statsResult = null;
+        try {
+          let statsResponse = await fetch("http://localhost:3003/stats", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify(transactionData),
+          });
 
-        let statsResult = await statsResponse.json();
-        console.log("stats result", statsResult);
+          statsResult = await statsResponse.json();
+          console.log("stats result", statsResult);
+        } catch (err) {
+          console.log(err);
+        }
+        // if stats service is down  so stastResult always be null and
+        // if stats service failed to store data statsResult.sucess will be 0
 
-        if (statsResult.success != 1) {
+        if (statsResult === null || statsResult.success != 1) {
           // if stats service failed to recieve data post data to event bus
           let eventResponse = await fetch("http://localhost:3004/event", {
             method: "POST",
@@ -143,7 +150,8 @@ module.exports = {
             body: JSON.stringify(transactionData),
           });
 
-          let eventResult = eventResponse.json();
+          let eventResult = await eventResponse.json();
+          console.log(" from event result", eventResult);
         }
 
         return res.status(200).json({
@@ -156,6 +164,8 @@ module.exports = {
         message: "transaction failed!",
       });
     } catch (err) {
+      console.log(err);
+
       return res.status(500).json({
         success: 0,
         message: "Server Error!",
@@ -165,7 +175,7 @@ module.exports = {
 
   // *********** DELETING TRANSACTION FROM TABLE
   deleteTransaction: async (req, res) => {
-    let { transaction_id, user_id } = req.params;
+    let { transaction_id, user_id } = req.query;
     let transactionData = {
       transaction_id,
       user_id,
@@ -197,20 +207,25 @@ module.exports = {
           );
 
         transactionData.trans_type = "DELETE";
-        let statsResponse = await fetch(
-          `http://localhost:3003/stats/transaction_id/${transactionData.transaction_id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json;charset=utf-8",
-            },
-            body: JSON.stringify(transactionData),
-          }
-        );
+        let statsResult = null;
+        try {
+          let statsResponse = await fetch(
+            `http://localhost:3003/stats/transaction_id/${transactionData.transaction_id}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json;charset=utf-8",
+              },
+              body: JSON.stringify(transactionData),
+            }
+          );
 
-        let statsResult = statsResponse.json();
+          statsResult = await statsResponse.json();
+        } catch (err) {
+          console.log(err);
+        }
 
-        if (statsResult.success != 1) {
+        if (statsResult === null || statsResult.success != 1) {
           // if stats service failed to recieve data post data to event bus
           let eventResponse = await fetch("http://localhost:3004/event", {
             method: "POST",
@@ -220,7 +235,8 @@ module.exports = {
             body: JSON.stringify(transactionData),
           });
 
-          let eventResult = eventResponse.json();
+          let eventResult = await eventResponse.json();
+          console.log("result from eventbus,", eventResult);
         }
 
         return res.status(200).json({
@@ -281,17 +297,22 @@ module.exports = {
           transactionData.attribute === "category"
         ) {
           transactionData.trans_type = "UPDATE";
-          let statsResponse = await fetch("localhost://3003/stats", {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json;charset=utf-8",
-            },
-            body: transactionData,
-          });
+          let statsResult = null;
+          try {
+            let statsResponse = await fetch("localhost://3003/stats", {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json;charset=utf-8",
+              },
+              body: transactionData,
+            });
 
-          let statsResult = statsResponse.json();
+            statsResult = await statsResponse.json();
+          } catch (err) {
+            console.log(err);
+          }
 
-          if (statsResult.success != 1) {
+          if (statsResult === null || statsResult.success != 1) {
             // if stats service failed to recieve data post data to event bus
             let eventResponse = await fetch("localhost://3003/event", {
               method: "POST",
@@ -301,7 +322,8 @@ module.exports = {
               body: transactionData,
             });
 
-            let eventResult = eventResponse.json();
+            let eventResult = await eventResponse.json();
+            console.log("result from eventbus,", eventResult);
           }
         }
 

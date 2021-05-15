@@ -1,3 +1,25 @@
+menadatory field must be present in transaction data :
+title,
+description,
+amount,
+mode_of_payment, (if income then send -1)
+category_id
+currency_id
+transaction_type_id
+user_id
+essential (if income then send -1 )
+
+
+
+
+
+
+
+
+
+
+
+
 INSERT INTO public.transaction(
 	id, title, description, amount, date,
 	mode_of_payment, essential, category_id, currency_id,

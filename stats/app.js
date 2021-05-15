@@ -27,8 +27,10 @@ app.listen(process.env.PORT || 3003, async () => {
   // get the missed metadata from event bus
   try {
     let result = await fetch("http://localhost:3004/event/");
-    let allData = await result.json();
-    // console.log("allData", allData);
+    let dataJson = await result.json();
+    let allData = dataJson.data;
+    // allData = JSON.parse(allData);
+    console.log("allData", allData);
     if (allData.data === 0) {
       console.log("no missed adata found");
       return;
@@ -36,10 +38,15 @@ app.listen(process.env.PORT || 3003, async () => {
 
     // once got all data save that data int database
 
-    let missedDataResult = await manageMissedData(allData);
-    if (missedDataResult == 1) console.log("missed data foud and added");
+    // let missedDataResult = await manageMissedData(allData);
+    let missedDataResult = await Promise.all(
+      allData.map((data) => manageMissedData(data))
+    );
+    console.log(missedDataResult);
+    if (missedDataResult == 1)
+      console.log("missed data foud and managed properly");
     else
-      console.log("adding missed data failed notify admin for manual adding");
+      console.log("managing missed data failed notify admin for manual adding");
   } catch (err) {
     console.log(err);
   }
