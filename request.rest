@@ -1,0 +1,21 @@
+// ************ USERService *******************8
+
+### 
+
+Post  http://localhost:3001/user/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "developer",
+    "password": "Developer@123",
+    "email":"developer@financewala.com",
+    "avatar":"avatar",
+    "theme":"light",
+    "currency_id":5
+    
+}
+
+### 
+GET http://localhost:3001/user/all HTTP/1.1
+content-type: application/json
+

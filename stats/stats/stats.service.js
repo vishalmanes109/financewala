@@ -192,6 +192,26 @@ module.exports = {
       return err;
     }
   },
+  getLineGraph: async (user_id, filter) => {
+    try {
+      console.log(user_id, filter);
+      let result;
+      if (filter === "all") result = await pool.query(``, [user_id]);
+
+      if (filter === "expense") result = await pool.query(``, [user_id]);
+
+      if (filter === "income") result = await pool.query(``, [user_id]);
+
+      if (filter === "transfer") result = await pool.query(``, [user_id]);
+
+      console.log(result);
+      return result;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  },
+
   getTransactionMetaByAttribute: async (transactionData) => {
     try {
       let result = await pool.query(``, []);

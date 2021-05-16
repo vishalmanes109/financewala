@@ -43,10 +43,26 @@ app.listen(process.env.PORT || 3003, async () => {
       allData.map((data) => manageMissedData(data))
     );
     console.log(missedDataResult);
-    if (missedDataResult == 1)
-      console.log("missed data foud and managed properly");
-    else
-      console.log("managing missed data failed notify admin for manual adding");
+    for (let i = 0; i < missedDataResult.length; i++) {
+      if (missedDataResult[i].success !== 1) {
+        console.log(
+          "managing missed data failed notify admin for manual adding"
+        );
+        // add the trans id and trans type into log for manual debugging
+        break;
+      } else console.log("missed data foud and managed properly");
+    }
+    // missedDataResult.map((result) => {
+
+    //   if (result.success !== 1) {
+    //     console.log(
+    //       "managing missed data failed notify admin for manual adding"
+    //     );
+    //     break;
+    //   } else {
+    //     console.log("missed data foud and managed properly");
+    //   }
+    // });
   } catch (err) {
     console.log(err);
   }
