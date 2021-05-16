@@ -12,7 +12,7 @@ db.on("connected", () => {
 
 let Schema = mongoose.Schema;
 let messageQueueScehma = new Schema({
-  id: String,
+  transaction_id: String,
   // type => create/update
   type: String,
   body: Object,

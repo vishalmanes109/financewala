@@ -29,40 +29,42 @@ app.listen(process.env.PORT || 3003, async () => {
     let result = await fetch("http://localhost:3004/event/");
     let dataJson = await result.json();
     let allData = dataJson.data;
-    // allData = JSON.parse(allData);
     console.log("allData", allData);
-    if (allData.data === 0) {
-      console.log("no missed adata found");
+
+    if (allData.length < 1) {
+      console.log("no missed data found");
       return;
     }
 
     // once got all data save that data int database
 
-    // let missedDataResult = await manageMissedData(allData);
     let missedDataResult = await Promise.all(
       allData.map((data) => manageMissedData(data))
     );
     console.log(missedDataResult);
-    for (let i = 0; i < missedDataResult.length; i++) {
-      if (missedDataResult[i].success !== 1) {
-        console.log(
-          "managing missed data failed notify admin for manual adding"
-        );
-        // add the trans id and trans type into log for manual debugging
-        break;
-      } else console.log("missed data foud and managed properly");
+    // call eventbus api to delete data
+    let dataToBeDeleted = [];
+    missedDataResult.forEach((data) => {
+      if (data.success != null && data.success != 0) {
+        dataToBeDeleted.push(data);
+      }
+    });
+    console.log("dataToBeDeleted", dataToBeDeleted);
+    let deleteMissedData = await fetch("http://localhost:3004/event", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify(dataToBeDeleted),
+    });
+    let deleteMissedDataResult = await deleteMissedData.json();
+    console.log(deleteMissedDataResult);
+    if (deleteMissedDataResult && deleteMissedDataResult.success !== 1) {
+      console.log("managing missed data failed notify admin for manual adding");
+      // add the trans id and trans type into log for manual debugging
+    } else {
+      console.log("missed data foud and managed properly");
     }
-    // missedDataResult.map((result) => {
-
-    //   if (result.success !== 1) {
-    //     console.log(
-    //       "managing missed data failed notify admin for manual adding"
-    //     );
-    //     break;
-    //   } else {
-    //     console.log("missed data foud and managed properly");
-    //   }
-    // });
   } catch (err) {
     console.log(err);
   }

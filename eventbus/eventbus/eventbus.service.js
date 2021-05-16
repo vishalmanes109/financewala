@@ -5,6 +5,7 @@ module.exports = {
     //  save data
     let metadata = {};
     metadata.body = data;
+    metadata.transaction_id = data.transaction_id || id;
     try {
       let result = await mongoDB.create(metadata);
       console.log("result of mongodb query", result);
@@ -16,15 +17,15 @@ module.exports = {
       };
     }
   },
-  deleteData: async () => {
+  deleteData: async (transaction_id) => {
     try {
       console.log("from service deletion");
-      let result = await mongoDB.remove({});
+      let result = await mongoDB.delete({ transaction_id: transaction_id });
       console.log("from servicereult:", result);
-      return result;
+      return 1;
     } catch (err) {
       console.log(err);
-      return { error: true, err };
+      return 0;
     }
   },
   getData: async () => {

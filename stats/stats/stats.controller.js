@@ -29,7 +29,7 @@ module.exports = {
       result = await updateTransacionMetaData(data.body);
       console.log(result);
     }
-    if (result.rowCount > 0) {
+    if (result && result.rowCount > 0) {
       return {
         id: data.body.id || data.body.transaction_id,
         trans_type: data.body.trans_type,

@@ -31,9 +31,40 @@ module.exports = {
     }
   },
   deleteMetaData: async (req, res) => {
-    console.log("fro controller deletion");
+    let allData = req.body;
+    console.log("fro controller deletion", allData.length);
+    // delete only thse data whose success=1 i.e it is properly managed in stats service
+    // let dataToBeDeleted = [];
+    // allData.forEach((data) => {
+    //   if (data.success == 1) dataToBeDeleted.push(data);
+    //   else {
+    //     // log data whose success != 1 so that that can be handled manually
+    //     console.log(data);
+    //   }
+    // });
+    //
+
+    if (allData.length === 0) {
+      console.log("lol");
+      return res.status(200).json({
+        success: 1,
+        message: "No data to be deleted ",
+      });
+    }
+
     try {
-      let result = await deleteData();
+      let deleteDataResult = await Promise.all(
+        allData.map((data) => {
+          deleteData(data.transaction_id || data.id);
+        })
+      );
+      console.log("deleteDataResult", deleteDataResult);
+      if (deleteDataResult.includes(0)) {
+        // logg this data and notify admin tio amually delete
+        console.log(
+          "managing missed data failed notify admin for manual adding"
+        );
+      }
       console.log("frm controller result:", result);
       if (result.error) {
         return res.status(500).json({
@@ -79,4 +110,5 @@ module.exports = {
       });
     }
   },
+  manageMetaData: async (req, res) => {},
 };
