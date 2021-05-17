@@ -24,6 +24,7 @@ module.exports = {
         });
       }
     } catch (err) {
+      console.log(err);
       return res.status(500).json({
         success: 0,
         message: "Server Error!",
@@ -53,31 +54,54 @@ module.exports = {
     }
 
     try {
+      // let delRes = await deleteData(allData[0].id, allData[0].trans_type);
+      // console.log("delRes", delRes);
+      // let resArr = [];
+      // await allData.forEach(async (data) => {
+      //   await resArr.push(await deleteData(data.id, data.trans_type));
+      // });
+      // console.log(resArr);
+
       let deleteDataResult = await Promise.all(
         allData.map((data) => {
-          deleteData(data.transaction_id || data.id);
+          deleteData(data.id, data.trans_type);
         })
       );
       console.log("deleteDataResult", deleteDataResult);
-      if (deleteDataResult.includes(0)) {
-        // logg this data and notify admin tio amually delete
-        console.log(
-          "managing missed data failed notify admin for manual adding"
-        );
-      }
-      console.log("frm controller result:", result);
-      if (result.error) {
-        return res.status(500).json({
-          success: 0,
-          message: "deletion failed!",
-        });
-      } else {
-        return res.status(200).json({
-          success: 1,
-          message: "deletion successful",
-        });
-      }
+
+      // let missedDataResult = await Promise.all(
+      //   allData.map((data) => manageMissedData(data))
+      // );
+      // console.log(missedDataResult);
+
+      // let isSuccess = false;
+      // for (let i = 0; i < deleteDataResult.length; i++) {
+      //   if (deleteDataResult && deleteDataResult[i].success === 0) {
+      //     isSuccess = false;
+      //     break;
+      //   }
+      //   isSuccess = true;
+      // }
+
+      // // console.log("frm controller result:", result);
+      // if (!isSuccess) {
+      //   // logg this data and notify admin tio amually delete
+      //   console.log(
+      //     "managing missed data failed notify admin for manual adding"
+      //   );
+      //   return res.status(500).json({
+      //     success: 0,
+      //     message: "deletion failed!",
+      //   });
+      // } else {
+      //   return res.status(200).json({
+      //     success: 1,
+      //     message: "deletion successful",
+      //   });
+      // }
+      return res.json({ lol: 1 });
     } catch (err) {
+      console.log(err);
       return res.status(500).json({
         success: 0,
         message: "Server Error!",
