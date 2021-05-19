@@ -35,12 +35,14 @@ module.exports = {
 
     if (result && result.rowCount > 0) {
       return {
+        _id: data._id,
         transaction_id: data.body.id || data.body.transaction_id,
         trans_type: data.body.trans_type,
         success: 1,
       };
     } else
       return {
+        _id: data._id,
         transaction_id: data.body.id || data.body.transaction_id,
         trans_type: data.body.trans_type,
         success: 0,

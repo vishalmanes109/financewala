@@ -21,12 +21,12 @@ module.exports = {
     console.log(data);
     let ids = [];
     data.forEach((d) => {
-      ids.push(d.transaction_id);
+      ids.push(d._id);
     });
     console.log(ids);
     try {
-      let result = await mongoDB.remove({
-        transaction_id: { $in: ids },
+      let result = await mongoDB.deleteMany({
+        _id: { $in: ids },
       });
       console.log("from service deletion", result);
       return result;

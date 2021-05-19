@@ -32,7 +32,7 @@ module.exports = mongoDB;
 
 const fun = async () => {
   console.log("in func");
-  let result = await messageQ.find(data);
+  let result = await messageQ.delete({});
   console.log(result);
 };
 

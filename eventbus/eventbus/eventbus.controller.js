@@ -45,10 +45,8 @@ module.exports = {
 
     try {
       let deleteDataResult = await deleteData(allData);
-      if (deleteDataResult && deleteDataResult.success === 1) {
-        console.log(
-          "managing missed data failed notify admin for manual adding"
-        );
+      if (deleteDataResult && deleteDataResult.deletedCount > 0) {
+        console.log("Deletion succesful");
         return res.status(500).json({
           success: 1,
           message: "deletion successful!",
