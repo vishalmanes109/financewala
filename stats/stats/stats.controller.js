@@ -15,11 +15,8 @@ module.exports = {
 
     // sql query wants id parameter but service send us transaction_id so add id attribute to data
     let result = null;
-    if (data.body.trans_type === "DELETE") {
-      // delete bulk meta data
-      result = await deleteTransacionMetaData(data.transaction_id);
-      console.log(result);
-    } else if (data.body.trans_type === "ADD") {
+
+    if (data.body.trans_type === "ADD") {
       // add missing data
       console.log("adding");
       result = await addTransacionMetaData(data.body);
@@ -28,16 +25,23 @@ module.exports = {
       console.log("updating");
       result = await updateTransacionMetaData(data.body);
       console.log(result);
+    } else if (data.body.trans_type === "DELETE") {
+      // delete bulk meta data
+      console.log("deleting");
+
+      result = await deleteTransacionMetaData(data.transaction_id);
+      console.log(result);
     }
+
     if (result && result.rowCount > 0) {
       return {
-        id: data.body.id || data.body.transaction_id,
+        transaction_id: data.body.id || data.body.transaction_id,
         trans_type: data.body.trans_type,
         success: 1,
       };
     } else
       return {
-        id: data.body.id || data.body.transaction_id,
+        transaction_id: data.body.id || data.body.transaction_id,
         trans_type: data.body.trans_type,
         success: 0,
       };

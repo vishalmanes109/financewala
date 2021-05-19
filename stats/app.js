@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const fetch = require("node-fetch");
 const statsRouter = require("./stats/stats.router");
 const { manageMissedData } = require("./stats/stats.controller");
+const { update } = require("../eventbus/database");
 
 const app = express();
 
@@ -37,18 +38,64 @@ app.listen(process.env.PORT || 3003, async () => {
     }
 
     // once got all data save that data int database
-
-    let missedDataResult = await Promise.all(
-      allData.map((data) => manageMissedData(data))
+    let addData = [];
+    let deleteData = [];
+    let updateData = [];
+    allData.forEach((data) => {
+      if (data.trans_type === "ADD") addData.push(data);
+      else if (data.trans_type === "UPDATE") updateData.push(data);
+      else if (data.trans_type === "DELETE") deleteData.push(data);
+      else {
+        console.log("there is problem with data fetched from eventbus");
+        //log adn notify admin
+      }
+    });
+    console.log(addDataResult, " :", updateDataResult, ":", deleteDataResult);
+    let addDataResult = await Promise.all(
+      addData.map((data) => {
+        manageMissedData(data);
+      })
     );
+    console.log(addDataResult);
+
+    let updateDataResult = await Promise.all(
+      updateData.map((data) => {
+        manageMissedData(data);
+      })
+    );
+    console.log(updateDataResult);
+    let deleteDataResult = await Promise.all(
+      deleteData.map((data) => {
+        manageMissedData(data);
+      })
+    );
+    console.log(deleteDataResult);
+
+    let missedDataResult = [];
+    missedDataResult = addDataResult.concat(updateDataResult, deleteDataResult);
+
     console.log(missedDataResult);
     // call eventbus api to delete data
+    // check which data has been managed succesfully and
+    //  add that to array so that that data will get deleted
     let dataToBeDeleted = [];
+    let dataManagementFailed = [];
     missedDataResult.forEach((data) => {
       if (data.success != null && data.success != 0) {
         dataToBeDeleted.push(data);
+      } else {
+        dataManagementFailed.push(data);
       }
     });
+    if (dataManagementFailed.length > 0) {
+      // log this and notify admin to manage this data manually
+      console.log(
+        "this metadata did not managed properly",
+        dataManagementFailed
+      );
+    }
+
+    // call event bus api to delete data
     console.log("dataToBeDeleted", dataToBeDeleted);
     let deleteMissedData = await fetch("http://localhost:3004/event", {
       method: "DELETE",

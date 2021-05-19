@@ -17,25 +17,19 @@ module.exports = {
       };
     }
   },
-  deleteData: async (transaction_id, trans_type) => {
+  deleteData: async (data) => {
+    console.log(data);
+    let ids = [];
+    data.forEach((d) => {
+      ids.push(d.transaction_id);
+    });
+    console.log(ids);
     try {
-      console.log("from service deletion");
-      let result = await mongoDB.deleteOne({ transaction_id: transaction_id });
-      console.log("from servicereult:", result);
-
-      if (result && result.deletedCount > 0) {
-        console.log("lol");
-        return {
-          id: data.body.id || data.body.transaction_id,
-          trans_type: trans_type,
-          success: 1,
-        };
-      } else
-        return {
-          id: data.body.id || data.body.transaction_id,
-          trans_type: trans_type,
-          success: 0,
-        };
+      let result = await mongoDB.remove({
+        transaction_id: { $in: ids },
+      });
+      console.log("from service deletion", result);
+      return result;
     } catch (err) {
       console.log(err);
       return {
