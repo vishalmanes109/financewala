@@ -28,36 +28,34 @@ module.exports = {
   updateTransacionMetaData: async (transactionMetaData) => {
     try {
       let result;
-      if (transactionData.attribute === "title") {
+      if (transactionMetaData.attribute === "title") {
         result = await pool.query(
           `update  trans_metadata set title =$1 where id=$2`,
-          [transactionData.title, transactionData.id]
+          [transactionMetaData.title, transactionMetaData.id]
         );
       }
-
-      if (transactionData.attribute === "amount") {
+      if (transactionMetaData.attribute === "amount") {
         result = await pool.query(
           `update  trans_metadata set amount =$1 where id=$2`,
-          [transactionData.amount, transactionData.id]
+          [transactionMetaData.amount, transactionMetaData.id]
         );
       }
-      if (transactionData.attribute === "mode_of_payment") {
+      if (transactionMetaData.attribute === "mode_of_payment") {
         result = await pool.query(
           `update  trans_metadata set mode_of_payment =$1 where id=$2`,
-          [transactionData.mode_of_payment, transactionData.id]
+          [transactionMetaData.mode_of_payment, transactionMetaData.id]
         );
       }
-      if (transactionData.attribute === "category_id") {
+      if (transactionMetaData.attribute === "category_id") {
         result = await pool.query(
           `update  trans_metadata set category_id =$1 where id=$2`,
-          [transactionData.category_id, transactionData.id]
+          [transactionMetaData.category_id, transactionMetaData.id]
         );
       }
-
-      if (transactionData.attribute === "transaction_type_id") {
+      if (transactionMetaData.attribute === "transaction_type_id") {
         result = await pool.query(
           `update  trans_metadata set transaction_type_id =$1 where id=$2`,
-          [transactionData.transaction_type_id, transactionData.id]
+          [transactionMetaData.transaction_type_id, transactionMetaData.id]
         );
       }
       console.log(result);

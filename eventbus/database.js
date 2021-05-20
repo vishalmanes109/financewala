@@ -32,11 +32,11 @@ module.exports = mongoDB;
 
 const fun = async () => {
   console.log("in func");
-  let result = await messageQ.delete({});
-  console.log(result);
+  let result = await mongoDB.find({});
+  console.log("DB has :", result.length, " documets");
 };
 
-// fun();
+fun();
 // db.once("open", function () {
 //   // we're connected!
 //   console.log("connected");

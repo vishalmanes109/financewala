@@ -187,12 +187,12 @@ module.exports = {
 
     try {
       let result = await deleteTransaction(transaction_id);
-      if (result.name)
+      if (result && result.name)
         return res.status(500).json({
           success: 0,
           message: "Error in query!",
         });
-      if (result.rowCount > 0) {
+      if (result && result.rowCount > 0) {
         if (!setCacheForNetMonthlyTransaction(transactionData.user_id))
           // caching failed the delete previous caching
           redisClient.HDEL(
@@ -258,7 +258,7 @@ module.exports = {
   },
   updateTransaction: async (req, res) => {
     let transactionData = req.body;
-    // console .log(transactionData);
+    console.log(transactionData);
 
     transactionData.title = cleaning(transactionData.title);
     transactionData.description = cleaning(transactionData.description);
@@ -272,12 +272,12 @@ module.exports = {
       });
     try {
       let result = await updateTransaction(transactionData);
-      if (result.name)
+      if (result && result.name)
         return res.status(500).json({
           success: 0,
           message: "Error in query!",
         });
-      if (result.rowCount > 0) {
+      if (result && result.rowCount > 0) {
         // totalTransactionData
         if (
           (transactionData.attribute === "amount" ||
@@ -294,17 +294,19 @@ module.exports = {
         if (
           transactionData.attribute === "amount" ||
           transactionData.attribute === "transaction_type_id" ||
-          transactionData.attribute === "category"
+          transactionData.attribute === "category_id" ||
+          transactionData.attribute === "mode_of_payment" ||
+          transactionData.attribute === "title"
         ) {
           transactionData.trans_type = "UPDATE";
           let statsResult = null;
           try {
-            let statsResponse = await fetch("localhost://3003/stats", {
+            let statsResponse = await fetch("https://localhost:3003/stats", {
               method: "PATCH",
               headers: {
                 "Content-Type": "application/json;charset=utf-8",
               },
-              body: transactionData,
+              body: JSON.stringify(transactionData),
             });
 
             statsResult = await statsResponse.json();
@@ -314,12 +316,12 @@ module.exports = {
 
           if (statsResult === null || statsResult.success != 1) {
             // if stats service failed to recieve data post data to event bus
-            let eventResponse = await fetch("localhost://3003/event", {
+            let eventResponse = await fetch("http://localhost:3004/event", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json;charset=utf-8",
               },
-              body: transactionData,
+              body: JSON.stringify(transactionData),
             });
 
             let eventResult = await eventResponse.json();
@@ -337,6 +339,7 @@ module.exports = {
         message: "transaction updation  failed!",
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).json({
         success: 0,
         message: "Server Error!",

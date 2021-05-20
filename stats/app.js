@@ -3,9 +3,9 @@ const cors = require("cors");
 
 const bodyParser = require("body-parser");
 
-const fetch = require("node-fetch");
 const statsRouter = require("./stats/stats.router");
-const { manageMissedData } = require("./stats/stats.controller");
+// const { dataFetchingScheduler } = require("./utilities/scheduler");
+const { dataFetchingScheduler } = require("./utilities/scheduler");
 
 const app = express();
 
@@ -24,63 +24,20 @@ app.get("/stats", (req, res) => {
 app.listen(process.env.PORT || 3003, async () => {
   console.log("stats server up and running on 3003");
 
-  // get the missed metadata from event bus
-  try {
-    let result = await fetch("http://localhost:3004/event/");
-    let dataJson = await result.json();
-    let allData = dataJson.data;
-    console.log("allData", allData);
+  // fetch and manage data this might failed for data with trans_type delete and update
+  dataFetchingScheduler();
 
-    if (allData.length < 1) {
-      console.log("no missed data found");
-      return;
-    }
+  // call same method after 2 minutes so that
+  // this time all the data with Tras_type delete and update will managed properly
+  setTimeout(() => {
+    dataFetchingScheduler();
+    console.log("called after 2 min");
+  }, 1 * 60000);
 
-    // once got all data save that data int database
+  // schedular which fetches data and manages it after 30 min
+  // setInterval( () =>{
+  //   dataFetchingScheduler();
+  // console.log("called after 30 min");
 
-    let missedDataResult = await Promise.all(
-      allData.map((data) => manageMissedData(data))
-    );
-    console.log(missedDataResult);
-
-    // call eventbus api to delete data
-    // check which data has been managed succesfully and
-    //  add that to array so that that data will get deleted
-    let dataToBeDeleted = [];
-    let dataManagementFailed = [];
-    missedDataResult.forEach((data) => {
-      if (data.success != null && data.success != 0) {
-        dataToBeDeleted.push(data);
-      } else {
-        dataManagementFailed.push(data);
-      }
-    });
-    if (dataManagementFailed.length > 0) {
-      // log this and notify admin to manage this data manually
-      console.log(
-        "this metadata did not managed properly",
-        dataManagementFailed
-      );
-    }
-
-    // call event bus api to delete data
-    console.log("dataToBeDeleted", dataToBeDeleted);
-    let deleteMissedData = await fetch("http://localhost:3004/event", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify(dataToBeDeleted),
-    });
-    let deleteMissedDataResult = await deleteMissedData.json();
-    console.log(deleteMissedDataResult);
-    if (deleteMissedDataResult && deleteMissedDataResult.success !== 1) {
-      console.log("managing missed data failed notify admin for manual adding");
-      // add the trans id and trans type into log for manual debugging
-    } else {
-      console.log("missed data foud and managed properly");
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  // }, 30 * 60000);
 });
