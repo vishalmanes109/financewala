@@ -137,7 +137,7 @@ module.exports = {
           result.rows[0].password = undefined;
           const jsontoken = await sign(
             { result: result.rows[0] },
-            process.env.JWT_KEY || "secrete",
+            process.env.JWT_KEY || ,
             {
               expiresIn: "72h",
             }
