@@ -1,5 +1,5 @@
 const mongooes = require("mongoose");
-const mongoDB = require("../database");
+const mongoDB = require("../utilities/database");
 module.exports = {
   saveDataInDB: async (data) => {
     //  save data

@@ -36,7 +36,7 @@ const fun = async () => {
   console.log("DB has :", result.length, " documets");
 };
 
-fun();
+// fun();
 // db.once("open", function () {
 //   // we're connected!
 //   console.log("connected");
