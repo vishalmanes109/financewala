@@ -12,12 +12,14 @@ const {
   getUserById,
 } = require("./user.controller");
 
+const { verifyToken } = require("../utilities/auth");
+
 router.get("/username/:username", isUserNameAvailable);
-router.get("/userid/:userid", getUserById);
+router.get("/userid/:userid", verifyToken, getUserById);
 router.post("/", createUser);
-router.get("/all", getUsers);
+router.get("/all", verifyToken, getUsers);
 router.post("/login", login);
-router.delete("/:id", deleteUser);
-router.patch("/", updateUser);
+router.delete("/:id", verifyToken, deleteUser);
+router.patch("/", verifyToken, updateUser);
 
 module.exports = router;

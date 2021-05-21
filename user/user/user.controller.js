@@ -9,7 +9,7 @@ const {
 } = require("./user.service");
 // import the hashing functions from bcrypt
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
-// import sign method of jsw lib fro generating token on login
+// import sign method of jsw lib for generating token on login
 const { sign } = require("jsonwebtoken");
 const { DataCleaning, isValidString } = require("../utilities/validator");
 
@@ -137,8 +137,7 @@ module.exports = {
           result.rows[0].password = undefined;
           const jsontoken = await sign(
             { result: result.rows[0] },
-            process.env.JWT_KEY || ,
-            {
+            process.env.JWT_KEY || {
               expiresIn: "72h",
             }
           );
@@ -156,6 +155,7 @@ module.exports = {
         }
       }
     } catch (err) {
+      console.log(err);
       return res.status(500).json({
         success: 0,
         message: "Server Error!",

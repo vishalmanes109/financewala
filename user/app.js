@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const bodyParser = require("body-parser");
-
+const dotenv = require("dotenv").config({ path: __dirname + "/.env" });
 const userRouter = require("./user/user.router");
 
 const app = express();
