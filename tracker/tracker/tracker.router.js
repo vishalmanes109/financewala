@@ -11,21 +11,26 @@ const {
   getCachedAllTransactionForMonth,
   getCachedRecentTransaction,
 } = require("../utilities/caching");
+
+const { verifyToken } = require("../utilities/auth");
+
 const router = express.Router();
 
-router.get("/", getTransactionByAttribute);
+router.get("/", verifyToken, getTransactionByAttribute);
 router.get(
   "/total/:user_id",
+  verifyToken,
   getCachedAllTransactionForMonth,
   getAllTransactionForMonth
 );
 
 router.get(
   "/recent/:user_id",
+  verifyToken,
   getCachedRecentTransaction,
   getRecentTransaction
 );
-router.post("/", addTransaction);
-router.patch("/", updateTransaction);
-router.delete("/", deleteTransaction);
+router.post("/", verifyToken, addTransaction);
+router.patch("/", verifyToken, updateTransaction);
+router.delete("/", verifyToken, deleteTransaction);
 module.exports = router;

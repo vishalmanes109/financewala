@@ -13,7 +13,11 @@ const { nanoid } = require("nanoid/async");
 
 const { redisClient } = require("../utilities/database");
 const fetch = require("node-fetch");
-const { cleaning, isValidAmount } = require("../utilities/validator");
+const {
+  cleaning,
+  isValidAmount,
+  isValidString,
+} = require("../utilities/validator");
 
 const getDateRange = () => {
   let start_date;
@@ -89,8 +93,6 @@ const setCacheForRecentTransaction = async (user_id) => {
 
 module.exports = {
   addTransaction: async (req, res) => {
-    // ******* TODO  ********//
-    // after adding data into database post request to the event bus
     let transactionData = req.body;
     transactionData.id = await nanoid(10);
     // console.log(transactionData);
@@ -98,10 +100,15 @@ module.exports = {
     transactionData.description = cleaning(transactionData.description);
     transactionData.mode_of_payment = cleaning(transactionData.mode_of_payment);
 
-    if (!isValidAmount(transactionData.amount))
+    if (
+      !isValidAmount(transactionData.amount) ||
+      !isValidString(transactionData.title) ||
+      !isValidString(transactionData.description) ||
+      !isValidString(transactionData.mode_of_payment)
+    )
       return res.status(400).json({
         success: 0,
-        message: "invalide amount",
+        message: "invalide data",
       });
     try {
       let result = await addTransaction(transactionData);
@@ -124,10 +131,12 @@ module.exports = {
         console.log(transactionData);
         let statsResult = null;
         try {
+          const clientToken = req.headers.Authorization;
           let statsResponse = await fetch("http://localhost:3003/stats", {
             method: "POST",
             headers: {
               "Content-Type": "application/json;charset=utf-8",
+              Authorization: "Bearer " + clientToken,
             },
             body: JSON.stringify(transactionData),
           });
@@ -139,13 +148,15 @@ module.exports = {
         }
         // if stats service is down  so stastResult always be null and
         // if stats service failed to store data statsResult.sucess will be 0
-
         if (statsResult === null || statsResult.success != 1) {
           // if stats service failed to recieve data post data to event bus
+          const clientToken = req.headers.Authorization;
+
           let eventResponse = await fetch("http://localhost:3004/event", {
             method: "POST",
             headers: {
               "Content-Type": "application/json;charset=utf-8",
+              Authorization: "Bearer " + clientToken,
             },
             body: JSON.stringify(transactionData),
           });
@@ -172,8 +183,6 @@ module.exports = {
       });
     }
   },
-
-  // *********** DELETING TRANSACTION FROM TABLE
   deleteTransaction: async (req, res) => {
     let { transaction_id, user_id } = req.query;
     let transactionData = {
@@ -209,12 +218,15 @@ module.exports = {
         transactionData.trans_type = "DELETE";
         let statsResult = null;
         try {
+          const clientToken = req.headers.Authorization;
+
           let statsResponse = await fetch(
             `http://localhost:3003/stats/transaction_id/${transactionData.transaction_id}`,
             {
               method: "DELETE",
               headers: {
                 "Content-Type": "application/json;charset=utf-8",
+                Authorization: "Bearer " + clientToken,
               },
               body: JSON.stringify(transactionData),
             }
@@ -226,11 +238,14 @@ module.exports = {
         }
 
         if (statsResult === null || statsResult.success != 1) {
+          const clientToken = req.headers.Authorization;
+
           // if stats service failed to recieve data post data to event bus
           let eventResponse = await fetch("http://localhost:3004/event", {
             method: "POST",
             headers: {
               "Content-Type": "application/json;charset=utf-8",
+              Authorization: "Bearer " + clientToken,
             },
             body: JSON.stringify(transactionData),
           });
@@ -301,10 +316,13 @@ module.exports = {
           transactionData.trans_type = "UPDATE";
           let statsResult = null;
           try {
+            const clientToken = req.headers.Authorization;
+
             let statsResponse = await fetch("https://localhost:3003/stats", {
               method: "PATCH",
               headers: {
                 "Content-Type": "application/json;charset=utf-8",
+                Authorization: "Bearer " + clientToken,
               },
               body: JSON.stringify(transactionData),
             });
@@ -315,11 +333,14 @@ module.exports = {
           }
 
           if (statsResult === null || statsResult.success != 1) {
+            const clientToken = req.headers.Authorization;
+
             // if stats service failed to recieve data post data to event bus
             let eventResponse = await fetch("http://localhost:3004/event", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json;charset=utf-8",
+                Authorization: "Bearer " + clientToken,
               },
               body: JSON.stringify(transactionData),
             });
@@ -446,7 +467,6 @@ module.exports = {
       });
     }
   },
-
   getTransactionByAttribute: async (req, res) => {
     let { user_id, attribute } = req.query;
     transactionData = {
