@@ -17,13 +17,13 @@ module.exports = {
     // return res.status(200).json({ success: 1 });
     try {
       let result = await addTransacionMetaData(transactionMetaData);
-      if (result.name) {
+      if (result && result.name) {
         return res.status(500).json({
           success: 0,
           message: "Error in query",
         });
       }
-      if (result.rowCount > 0) {
+      if (result && result.rowCount > 0) {
         console.log("metadata added in stats ");
         return res.status(200).json({
           success: 1,
@@ -50,13 +50,13 @@ module.exports = {
     // return res.status(200).json({ success: 1 });
     try {
       let result = await deleteTransacionMetaData(transaction_id);
-      if (result.name) {
+      if (result && result.name) {
         return res.status(500).json({
           success: 0,
           message: "Error in query",
         });
       }
-      if (result.rowCount > 0) {
+      if (result && result.rowCount > 0) {
         console.log("metadata deleted in stats");
         return res.status(200).json({
           success: 1,
@@ -82,13 +82,13 @@ module.exports = {
     // return res.status(200).json({ success: 1 });
     try {
       let result = await updateTransacionMetaData(transactionMetaData);
-      if (result.name) {
+      if (result && result.name) {
         return res.status(500).json({
           success: 0,
           message: "Error in query",
         });
       }
-      if (result.rowCount > 0) {
+      if (result && result.rowCount > 0) {
         console.log("meatda updated in stats");
         return res.status(200).json({
           success: 1,
@@ -122,13 +122,13 @@ module.exports = {
           .status(401)
           .json({ success: 1, message: "please pass valid graph" });
 
-      if (result.name) {
+      if (result && result.name) {
         return res.status(500).json({
           success: 0,
           message: "Error in query",
         });
       }
-      if (result.rowCount > 0) {
+      if (result && result.rowCount > 0) {
         return res.status(200).json({
           success: 1,
           result: result.rows,
@@ -136,7 +136,7 @@ module.exports = {
       }
       return res.status(401).json({
         success: 0,
-        message: "Invalid user_id",
+        message: "Invalid user_id or invalid filter",
       });
     } catch (err) {
       return res.status(500).json({ success: 0, message: "server error" });
