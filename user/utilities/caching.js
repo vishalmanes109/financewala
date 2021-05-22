@@ -8,12 +8,13 @@ module.exports = {
   //  }
   //
   //
+
   getCachedAllTransactionForMonth: async (req, res, next) => {
     let { user_id } = req.params;
     try {
       redisClient.hget(`user${user_id}`, "totalTransaction", (err, data) => {
         if (err) {
-          console.log("err" + err);
+          console.log("err", err);
           next();
         } else if (data) {
           console.log(JSON.parse(data));

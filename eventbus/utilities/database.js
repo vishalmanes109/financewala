@@ -21,11 +21,6 @@ let messageQueueScehma = new Schema({
 
 // MODEL
 
-data = {
-  id: "id1",
-  // type: "metadata",
-  body: { id: 1, title: "salary" },
-};
 let mongoDB = mongoose.model("messageQueue", messageQueueScehma);
 
 module.exports = mongoDB;
@@ -37,7 +32,3 @@ const fun = async () => {
 };
 
 // fun();
-// db.once("open", function () {
-//   // we're connected!
-//   console.log("connected");
-// });
