@@ -1,8 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
-const bodyParser = require("body-parser");
-const dotenv = require("dotenv").config({ path: __dirname + "/.env" });
+require("dotenv").config({ path: __dirname + "/.env" });
 
 const statsRouter = require("./stats/stats.router");
 // const { dataFetchingScheduler } = require("./utilities/scheduler");
@@ -36,9 +34,8 @@ app.listen(process.env.PORT || 3003, async () => {
   }, 1 * 60000);
 
   // schedular which fetches data and manages it after 30 min
-  // setInterval( () =>{
-  //   dataFetchingScheduler();
-  // console.log("called after 30 min");
-
-  // }, 30 * 60000);
+  setInterval(() => {
+    dataFetchingScheduler();
+    console.log("called after 30 min");
+  }, 30 * 60000);
 });
