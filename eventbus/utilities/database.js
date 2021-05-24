@@ -1,15 +1,19 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config({ path: __dirname + "/.env" });
+require("dotenv").config({ path: __dirname + "/.env" });
 
-mongoose.connect(process.env.DBURL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-const db = mongoose.connection;
-db.on("connected", () => {
-  console.log("connected to database");
-});
-
+let db;
+try {
+  mongoose.connect(process.env.DBURL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  db = mongoose.connection;
+  db.on("connected", () => {
+    console.log("connected to database");
+  });
+} catch (err) {
+  console.log(err);
+}
 let Schema = mongoose.Schema;
 let messageQueueScehma = new Schema({
   transaction_id: String,
