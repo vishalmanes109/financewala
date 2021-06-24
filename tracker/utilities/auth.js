@@ -3,6 +3,7 @@ module.exports = {
   // valdationg the token and giving permission
   checkToken: (req, res, next) => {
     let token = req.get("authorization");
+    console.log(req.headers);
     if (!req.headers.authorization) {
       return res.stutus(401).send("Unauthorized Access");
     }
@@ -30,6 +31,8 @@ module.exports = {
   },
 
   verifyToken(req, res, next) {
+    console.log(req.headers);
+
     if (!req.headers.authorization) {
       return res.status(401).send("Unauthorized request");
     }

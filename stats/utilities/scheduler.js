@@ -1,4 +1,5 @@
 const fetch = require("node-fetch");
+const { sign } = require("jsonwebtoken");
 
 const {
   addTransacionMetaData,
@@ -46,7 +47,17 @@ const manageMissedData = async (data) => {
 module.exports = {
   dataFetchingScheduler: async () => {
     try {
-      let result = await fetch("http://localhost:3004/event/");
+      const serverToken = await sign(
+        { payload: process.env.PAYLOAD },
+        process.env.JWT_KEY || {}
+      );
+      let result = await fetch("http://localhost:3004/event/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+          Authorization: "Bearer " + serverToken,
+        },
+      });
       let dataJson = await result.json();
       let allData = dataJson.data;
       console.log("allData", allData);
@@ -89,6 +100,7 @@ module.exports = {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json;charset=utf-8",
+          Authorization: "Bearer " + serverToken,
         },
         body: JSON.stringify(dataToBeDeleted),
       });

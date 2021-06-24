@@ -18,10 +18,10 @@ module.exports = {
           transactionMetaData.user_id,
         ]
       );
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return err;
     }
   },
@@ -58,10 +58,10 @@ module.exports = {
           [transactionMetaData.transaction_type_id, transactionMetaData.id]
         );
       }
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return err;
     }
   },
@@ -70,10 +70,10 @@ module.exports = {
       let result = await pool.query(`delete from trans_metadata where id= $1`, [
         transaction_id,
       ]);
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return err;
     }
   },
@@ -103,10 +103,10 @@ module.exports = {
       else {
         result = { message: "invalid filter" };
       }
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return err;
     }
   },
@@ -145,16 +145,16 @@ module.exports = {
       else {
         result = { message: "invalid filter" };
       }
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return err;
     }
   },
   getBarGraph: async (user_id, filter) => {
     try {
-      console.log(user_id, filter);
+      // console.log(user_id, filter);
       let result;
       if (filter === "all")
         result = await pool.query(
@@ -188,16 +188,13 @@ module.exports = {
         result = { message: "invalid filter" };
       }
 
-      console.log(result);
       return result;
     } catch (err) {
-      console.log(err);
       return err;
     }
   },
   getLineGraph: async (user_id, filter) => {
     try {
-      console.log(user_id, filter);
       let result;
       if (filter === "all")
         result = await pool.query(
@@ -230,21 +227,20 @@ module.exports = {
         result = { message: "invalid filter" };
       }
 
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return err;
     }
   },
-
   getTransactionMetaByAttribute: async (transactionData) => {
     try {
       let result = await pool.query(``, []);
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return err;
     }
   },
@@ -266,10 +262,10 @@ module.exports = {
           transactionMetaData.user_id,
         ]
       );
-      console.log(result);
+      // console.log(result);
       return 1;
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return 0;
     }
   },
