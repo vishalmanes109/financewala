@@ -7,6 +7,7 @@ const {
   getTotalExpenseForMonth,
   getTotalTransferForMonth,
   getRecentTransaction,
+  getTransactionById,
 } = require("./tracker.service");
 
 const { nanoid } = require("nanoid/async");
@@ -476,6 +477,34 @@ module.exports = {
     // console.log(transactionData);
     try {
       let result = await getTransactionByAttribute(transactionData);
+      if (result.name)
+        return res.status(500).json({
+          success: 0,
+          message: "Error in query!",
+        });
+      if (result.rowCount > 0)
+        return res.status(200).json({
+          success: 1,
+          message: "Transacion sucessful!",
+          result: result.rows,
+        });
+      return res.status(400).json({
+        success: 0,
+        message: "0 result found!",
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: 0,
+        message: "Server Error!",
+      });
+    }
+  },
+  getTransactionById: async (req, res) => {
+    let { id } = req.params;
+
+    // console.log(transactionData);
+    try {
+      let result = await getTransactionById(id);
       if (result.name)
         return res.status(500).json({
           success: 0,

@@ -96,6 +96,20 @@ module.exports = {
       return err;
     }
   },
+  getTransactionById: async (transaction_id) => {
+    try {
+      let result;
+      result = await pool.query(
+        `select * from transaction where transaction_id=$1 `,
+        [transaction_id]
+      );
+      // console.log(result);
+      return result;
+    } catch (err) {
+      // console.log(err);
+      return err;
+    }
+  },
 
   getTransactionByAttribute: async (transactionData) => {
     try {
