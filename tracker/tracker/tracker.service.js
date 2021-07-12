@@ -2,7 +2,6 @@ const { pool } = require("../utilities/database");
 
 module.exports = {
   addTransaction: async (transactionData) => {
-    //  console.log(transactionData);
     try {
       let result;
       if (!transactionData.date) {
@@ -27,10 +26,10 @@ module.exports = {
           transactionData.user_id,
         ]
       );
-      // console.log(result);
+      console.log(result);
       return result;
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       return err;
     }
   },
@@ -50,45 +49,61 @@ module.exports = {
 
   updateTransaction: async (transactionData) => {
     try {
-      let result;
-      if (transactionData.attribute === "title") {
-        result = await pool.query(
-          `update  transaction set title =$1 where id=$2`,
-          [transactionData.title, transactionData.id]
-        );
-      } else if (transactionData.attribute === "description") {
-        result = await pool.query(
-          `update  transaction set description =$1 where id=$2`,
-          [transactionData.description, transactionData.id]
-        );
-      } else if (transactionData.attribute === "amount") {
-        result = await pool.query(
-          `update  transaction set amount =$1 where id=$2`,
-          [transactionData.amount, transactionData.id]
-        );
-      } else if (transactionData.attribute === "mode_of_payment") {
-        result = await pool.query(
-          `update  transaction set mode_of_payment =$1 where id=$2`,
-          [transactionData.mode_of_payment, transactionData.id]
-        );
-      } else if (transactionData.attribute === "category_id") {
-        result = await pool.query(
-          `update  transaction set category_id =$1 where id=$2`,
-          [transactionData.category_id, transactionData.id]
-        );
-      } else if (transactionData.attribute === "currency_id") {
-        result = await pool.query(
-          `update  transaction set currency_id =$1 where id=$2`,
-          [transactionData.currency_id, transactionData.id]
-        );
-      } else if (transactionData.attribute === "transaction_type_id") {
-        result = await pool.query(
-          `update  transaction set transaction_type_id =$1 where id=$2`,
-          [transactionData.transaction_type_id, transactionData.id]
-        );
-      } else {
-        result = { message: "invalid filter attribute" };
-      }
+      let result = await pool.query(
+        `update  transaction set title =$1,description =$2,amount=$3,date=$4,mode_of_payment=$5, category_id=$6, essential=$7,currency_id=$8,transaction_type_id=$9,user_id=$10 where id=$11`,
+        [
+          transactionData.title,
+          transactionData.description,
+          transactionData.amount,
+          transactionData.date,
+          transactionData.mode_of_payment,
+          transactionData.category_id,
+          transactionData.essential,
+          transactionData.currency_id,
+          transactionData.transaction_type_id,
+          transactionData.user_id,
+          transactionData.id,
+        ]
+      );
+
+      // if (transactionData.attribute === "title") {
+      //   result = await pool.query(
+      //     `update  transaction set title =$1 where id=$2`,
+      //     [transactionData.title, transactionData.id]
+      //   );
+      // } else if (transactionData.attribute === "description") {
+      //   result = await pool.query(
+      //     `update  transaction set description =$1 where id=$2`,
+      //     [transactionData.description, transactionData.id]
+      //   );
+      // } else if (transactionData.attribute === "amount") {
+      //   result = await pool.query(
+      //     `update  transaction set amount =$1 where id=$2`,
+      //     [transactionData.amount, transactionData.id]
+      //   );
+      // } else if (transactionData.attribute === "mode_of_payment") {
+      //   result = await pool.query(
+      //     `update  transaction set mode_of_payment =$1 where id=$2`,
+      //     [transactionData.mode_of_payment, transactionData.id]
+      //   );
+      // } else if (transactionData.attribute === "category_id") {
+      //   result = await pool.query(
+      //     `update  transaction set category_id =$1 where id=$2`,
+      //     [transactionData.category_id, transactionData.id]
+      //   );
+      // } else if (transactionData.attribute === "currency_id") {
+      //   result = await pool.query(
+      //     `update  transaction set currency_id =$1 where id=$2`,
+      //     [transactionData.currency_id, transactionData.id]
+      //   );
+      // } else if (transactionData.attribute === "transaction_type_id") {
+      //   result = await pool.query(
+      //     `update  transaction set transaction_type_id =$1 where id=$2`,
+      //     [transactionData.transaction_type_id, transactionData.id]
+      //   );
+      // } else {
+      //   result = { message: "invalid filter attribute" };
+      // }
       // console.log(result);
       return result;
     } catch (err) {
@@ -99,22 +114,20 @@ module.exports = {
   getTransactionById: async (transaction_id) => {
     try {
       let result;
-      result = await pool.query(
-        `select * from transaction where transaction_id=$1 `,
-        [transaction_id]
-      );
-      // console.log(result);
+      result = await pool.query(`select * from transaction where id=$1 `, [
+        transaction_id,
+      ]);
+      console.log(result);
       return result;
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       return err;
     }
   },
-
   getTransactionByAttribute: async (transactionData) => {
     try {
       let result;
-      if (transactionData.attribute === "date") {
+      if (transactionData.attribute === "period") {
         result = await pool.query(
           `select * from transaction where date >= $1 AND date <  $2 and user_id= $3`,
           [
@@ -128,18 +141,31 @@ module.exports = {
           `select * from transaction where category_id=$1 and user_id= $2`,
           [transactionData.category_id, transactionData.user_id]
         );
+      } else if (transactionData.attribute === "title") {
+        transactionData.title = "%".concat(transactionData.title, "%");
+
+        result = await pool.query(
+          `select * from transaction
+          where title ilike $1 and user_id= $2 order by date desc`,
+          [transactionData.title, transactionData.user_id]
+        );
       } else if (transactionData.attribute === "mode_of_payment") {
         result = await pool.query(
           `select * from transaction where mode_of_payment=$1 and user_id= $2`,
           [transactionData.mode_of_payment, transactionData.user_id]
         );
+      } else if (transactionData.attribute === "transaction_type_id") {
+        result = await pool.query(
+          `select * from transaction where transaction_type_id=$1 and user_id= $2`,
+          [transactionData.mode_of_payment, transactionData.user_id]
+        );
       } else {
         result = { message: "invalid filter attribute" };
       }
-      // console.log(result);
+      console.log(result);
       return result;
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       return err;
     }
   },
@@ -256,10 +282,10 @@ module.exports = {
         where user_id=$1 and currency_id =currency.id  order by date Desc `,
         [user_id]
       );
-      // console.log(result);
+      console.log(result);
       return result;
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       return err;
     }
   },

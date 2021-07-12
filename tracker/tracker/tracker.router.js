@@ -16,23 +16,21 @@ const {
 const { verifyToken } = require("../utilities/auth");
 
 const router = express.Router();
-router.get("/id/:id", verifyToken, getTransactionById);
+router.get("/id/:id",   getTransactionById);
 
-router.get("/", verifyToken, getTransactionByAttribute);
+router.get("/",   getTransactionByAttribute);
 router.get(
   "/total/:user_id",
-  verifyToken,
   getCachedAllTransactionForMonth,
   getAllTransactionForMonth
 );
 
 router.get(
   "/recent/:user_id",
-  verifyToken,
   getCachedRecentTransaction,
   getRecentTransaction
 );
-router.post("/", verifyToken, addTransaction);
-router.patch("/", verifyToken, updateTransaction);
-router.delete("/", verifyToken, deleteTransaction);
+router.post("/", addTransaction);
+router.patch("/", updateTransaction);
+router.delete("/", deleteTransaction);
 module.exports = router;

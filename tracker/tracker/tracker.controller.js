@@ -141,6 +141,7 @@ module.exports = {
             },
             body: JSON.stringify(transactionData),
           });
+          console.log("stats statsResponse", statsResponse);
 
           statsResult = await statsResponse.json();
           console.log("stats result", statsResult);
@@ -275,12 +276,9 @@ module.exports = {
   updateTransaction: async (req, res) => {
     let transactionData = req.body;
     console.log(transactionData);
-
     transactionData.title = cleaning(transactionData.title);
     transactionData.description = cleaning(transactionData.description);
     transactionData.mode_of_payment = cleaning(transactionData.mode_of_payment);
-    transactionData.attribute = cleaning(transactionData.attribute);
-
     if (!isValidAmount(transactionData.amount))
       return res.status(500).json({
         success: 0,
@@ -469,14 +467,16 @@ module.exports = {
     }
   },
   getTransactionByAttribute: async (req, res) => {
-    let { user_id, attribute } = req.query;
+    let { attribute, value, id } = req.query;
     transactionData = {
-      user_id,
+      user_id: id,
       attribute,
+      value,
     };
-    // console.log(transactionData);
+    console.log(transactionData);
     try {
       let result = await getTransactionByAttribute(transactionData);
+      console.log("result.rows", result.rows);
       if (result.name)
         return res.status(500).json({
           success: 0,
@@ -493,6 +493,7 @@ module.exports = {
         message: "0 result found!",
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).json({
         success: 0,
         message: "Server Error!",
@@ -502,9 +503,11 @@ module.exports = {
   getTransactionById: async (req, res) => {
     let { id } = req.params;
 
-    // console.log(transactionData);
+    console.log(id);
     try {
       let result = await getTransactionById(id);
+      console.log("result", result);
+
       if (result.name)
         return res.status(500).json({
           success: 0,
