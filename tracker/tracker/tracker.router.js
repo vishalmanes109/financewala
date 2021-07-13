@@ -7,6 +7,7 @@ const {
   getAllTransactionForMonth,
   getRecentTransaction,
   getTransactionById,
+  getTransactionByPeriod,
 } = require("./tracker.controller");
 const {
   getCachedAllTransactionForMonth,
@@ -16,9 +17,10 @@ const {
 const { verifyToken } = require("../utilities/auth");
 
 const router = express.Router();
-router.get("/id/:id",   getTransactionById);
+router.get("/id/:id", getTransactionById);
 
-router.get("/",   getTransactionByAttribute);
+router.get("/", getTransactionByAttribute);
+router.get("/period", getTransactionByPeriod);
 router.get(
   "/total/:user_id",
   getCachedAllTransactionForMonth,

@@ -124,6 +124,21 @@ module.exports = {
       return err;
     }
   },
+  getTransactionByPeriod: async (transactionData) => {
+    try {
+      console.log(transactionData);
+      let result = await pool.query(
+        `select * from transaction where (date,date) overlaps ($1 ,$2 ) and user_id=$3 order by  date desc ;`,
+        [transactionData.start, transactionData.end, transactionData.user_id]
+      );
+
+      console.log(result);
+      return result;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  },
   getTransactionByAttribute: async (transactionData) => {
     try {
       let result;
@@ -138,26 +153,49 @@ module.exports = {
         );
       } else if (transactionData.attribute === "category_id") {
         result = await pool.query(
-          `select * from transaction where category_id=$1 and user_id= $2`,
+          `select transaction.id,title,description,amount,date,mode_of_payment,essential,category.name,transaction_type.type 
+          from transaction,category,transaction_type 
+          where transaction.category_id=category.id and transaction.transaction_type_id=transaction_type.id and  category_id=$1 and user_id= $2`,
           [transactionData.category_id, transactionData.user_id]
         );
       } else if (transactionData.attribute === "title") {
-        transactionData.title = "%".concat(transactionData.title, "%");
-
+        transactionData.value = "%".concat(transactionData.value, "%");
+        console.log(transactionData.title);
         result = await pool.query(
-          `select * from transaction
-          where title ilike $1 and user_id= $2 order by date desc`,
-          [transactionData.title, transactionData.user_id]
+          `select transaction.id,title,description,amount,date,mode_of_payment,essential,category.name,transaction_type.type 
+          from transaction,category,transaction_type 
+          where transaction.category_id=category.id and transaction.transaction_type_id=transaction_type.id and title ilike $1 and user_id= $2 order by date desc`,
+          [transactionData.value, transactionData.user_id]
+        );
+      } else if (transactionData.attribute === "description") {
+        transactionData.value = "%".concat(transactionData.value, "%");
+        console.log(transactionData.title);
+        result = await pool.query(
+          `select transaction.id,title,description,amount,date,mode_of_payment,essential,category.name,transaction_type.type 
+          from transaction,category,transaction_type 
+          where transaction.category_id=category.id and transaction.transaction_type_id=transaction_type.id and description ilike $1 and user_id= $2 order by date desc`,
+          [transactionData.value, transactionData.user_id]
         );
       } else if (transactionData.attribute === "mode_of_payment") {
         result = await pool.query(
-          `select * from transaction where mode_of_payment=$1 and user_id= $2`,
-          [transactionData.mode_of_payment, transactionData.user_id]
+          `select  transaction.id,title,description,amount,date,mode_of_payment,essential,category.name,transaction_type.type 
+          from transaction,category,transaction_type 
+          where transaction.category_id=category.id and transaction.transaction_type_id=transaction_type.id and mode_of_payment=$1 and user_id= $2`,
+          [transactionData.value, transactionData.user_id]
         );
       } else if (transactionData.attribute === "transaction_type_id") {
         result = await pool.query(
-          `select * from transaction where transaction_type_id=$1 and user_id= $2`,
-          [transactionData.mode_of_payment, transactionData.user_id]
+          `select  transaction.id,title,description,amount,date,mode_of_payment,essential,category.name,transaction_type.type 
+          from transaction,category,transaction_type 
+          where transaction.category_id=category.id and transaction.transaction_type_id=transaction_type.id and transaction.transaction_type_id=$1 and user_id= $2`,
+          [transactionData.value, transactionData.user_id]
+        );
+      } else if (transactionData.attribute === "essential") {
+        result = await pool.query(
+          `select  transaction.id,title,description,amount,date,mode_of_payment,essential,category.name,transaction_type.type 
+          from transaction,category,transaction_type 
+          where transaction.category_id=category.id and transaction.transaction_type_id=transaction_type.id and transaction.essential=$1 and user_id= $2`,
+          [transactionData.value, transactionData.user_id]
         );
       } else {
         result = { message: "invalid filter attribute" };
