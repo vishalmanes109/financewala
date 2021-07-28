@@ -9,7 +9,9 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-
+app.get("/lol", (req, res) => {
+  res.send("lol");
+});
 app.use("/transaction", transactionRouter);
 
 app.listen(process.env.PORT || 3002, () => {

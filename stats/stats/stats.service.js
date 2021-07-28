@@ -18,50 +18,64 @@ module.exports = {
           transactionMetaData.user_id,
         ]
       );
-      // console.log(result);
+      console.log(result);
       return result;
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       return err;
     }
   },
-  updateTransacionMetaData: async (transactionMetaData) => {
+  updateTransactionMetaData: async (transactionMetaData) => {
     try {
       let result;
-      if (transactionMetaData.attribute === "title") {
-        result = await pool.query(
-          `update  trans_metadata set title =$1 where id=$2`,
-          [transactionMetaData.title, transactionMetaData.id]
-        );
-      }
-      if (transactionMetaData.attribute === "amount") {
-        result = await pool.query(
-          `update  trans_metadata set amount =$1 where id=$2`,
-          [transactionMetaData.amount, transactionMetaData.id]
-        );
-      }
-      if (transactionMetaData.attribute === "mode_of_payment") {
-        result = await pool.query(
-          `update  trans_metadata set mode_of_payment =$1 where id=$2`,
-          [transactionMetaData.mode_of_payment, transactionMetaData.id]
-        );
-      }
-      if (transactionMetaData.attribute === "category_id") {
-        result = await pool.query(
-          `update  trans_metadata set category_id =$1 where id=$2`,
-          [transactionMetaData.category_id, transactionMetaData.id]
-        );
-      }
-      if (transactionMetaData.attribute === "transaction_type_id") {
-        result = await pool.query(
-          `update  trans_metadata set transaction_type_id =$1 where id=$2`,
-          [transactionMetaData.transaction_type_id, transactionMetaData.id]
-        );
-      }
-      // console.log(result);
+      result = await pool.query(
+        `update  trans_metadata set title =$1,amount=$2,date=$3,mode_of_payment=$4, category_id=$5, essential=$6,transaction_type_id=$7,user_id=$8 where id=$9`,
+        [
+          transactionMetaData.title,
+          transactionMetaData.amount,
+          transactionMetaData.date,
+          transactionMetaData.mode_of_payment,
+          transactionMetaData.category_id,
+          transactionMetaData.essential,
+          transactionMetaData.transaction_type_id,
+          transactionMetaData.user_id,
+          transactionMetaData.id,
+        ]
+      );
+      // if (transactionMetaData.attribute === "title") {
+      //   result = await pool.query(
+      //     `update  trans_metadata set title =$1 where id=$2`,
+      //     [transactionMetaData.title, transactionMetaData.id]
+      //   );
+      // }
+      // if (transactionMetaData.attribute === "amount") {
+      //   result = await pool.query(
+      //     `update  trans_metadata set amount =$1 where id=$2`,
+      //     [transactionMetaData.amount, transactionMetaData.id]
+      //   );
+      // }
+      // if (transactionMetaData.attribute === "mode_of_payment") {
+      //   result = await pool.query(
+      //     `update  trans_metadata set mode_of_payment =$1 where id=$2`,
+      //     [transactionMetaData.mode_of_payment, transactionMetaData.id]
+      //   );
+      // }
+      // if (transactionMetaData.attribute === "category_id") {
+      //   result = await pool.query(
+      //     `update  trans_metadata set category_id =$1 where id=$2`,
+      //     [transactionMetaData.category_id, transactionMetaData.id]
+      //   );
+      // }
+      // if (transactionMetaData.attribute === "transaction_type_id") {
+      //   result = await pool.query(
+      //     `update  trans_metadata set transaction_type_id =$1 where id=$2`,
+      //     [transactionMetaData.transaction_type_id, transactionMetaData.id]
+      //   );
+      // }
+      console.log(result);
       return result;
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       return err;
     }
   },
@@ -226,7 +240,6 @@ module.exports = {
       else {
         result = { message: "invalid filter" };
       }
-
       // console.log(result);
       return result;
     } catch (err) {

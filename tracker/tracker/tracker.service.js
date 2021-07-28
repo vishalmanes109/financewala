@@ -104,10 +104,10 @@ module.exports = {
       // } else {
       //   result = { message: "invalid filter attribute" };
       // }
-      // console.log(result);
+      console.log(result);
       return result;
     } catch (err) {
-      // console .log(err);
+      console.log(err);
       return err;
     }
   },
@@ -315,9 +315,9 @@ module.exports = {
   getRecentTransaction: async (user_id) => {
     try {
       let result = await pool.query(
-        `select transaction.id,transaction.title,transaction.description,transaction.amount,transaction.date,transaction.transaction_type_id,transaction.user_id, currency.symbol
+        `select transaction.id,transaction.title,transaction.description,transaction..amount,transaction.date,transaction.mode_of_payment,transaction.essential,transaction.category_id,transaction.currency_id,transaction.transaction_type_id,transaction.user_id
          from transaction,currency 
-        where user_id=$1 and currency_id =currency.id  order by date Desc `,
+        where user_id=$1 and transaction.currency_id =currency.id  order by date Desc `,
         [user_id]
       );
       console.log(result);

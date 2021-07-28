@@ -1,7 +1,7 @@
 const {
   addTransacionMetaData,
   deleteTransacionMetaData,
-  updateTransacionMetaData,
+  updateTransactionMetaData,
   getPieChart,
   getHeatMap,
   getBarGraph,
@@ -81,7 +81,7 @@ module.exports = {
 
     // return res.status(200).json({ success: 1 });
     try {
-      let result = await updateTransacionMetaData(transactionMetaData);
+      let result = await updateTransactionMetaData(transactionMetaData);
       if (result && result.name) {
         return res.status(500).json({
           success: 0,

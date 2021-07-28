@@ -4,7 +4,7 @@ const { sign } = require("jsonwebtoken");
 const {
   addTransacionMetaData,
   deleteTransacionMetaData,
-  updateTransacionMetaData,
+  updateTransactionMetaData,
 } = require("../stats/stats.service");
 
 const manageMissedData = async (data) => {
@@ -18,7 +18,7 @@ const manageMissedData = async (data) => {
     console.log(result);
   } else if (data.body.trans_type === "UPDATE") {
     console.log("updating");
-    result = await updateTransacionMetaData(data.body);
+    result = await updateTransactionMetaData(data.body);
     console.log(result);
   } else if (data.body.trans_type === "DELETE") {
     // delete bulk meta data

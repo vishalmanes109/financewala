@@ -82,7 +82,6 @@ const setCacheForNetMonthlyTransaction = async (user_id) => {
     return true;
   } else return false;
 };
-
 const setCacheForRecentTransaction = async (user_id) => {
   let result = await getRecentTransaction(user_id);
   if (result.rowCount > 0) {
@@ -287,6 +286,7 @@ module.exports = {
       });
     try {
       let result = await updateTransaction(transactionData);
+      console.log("result in controller", result);
       if (result && result.name)
         return res.status(500).json({
           success: 0,
@@ -294,11 +294,7 @@ module.exports = {
         });
       if (result && result.rowCount > 0) {
         // totalTransactionData
-        if (
-          (transactionData.attribute === "amount" ||
-            transactionData.attribute === "transaction_type_id") &&
-          !setCacheForNetMonthlyTransaction(transactionData.user_id)
-        )
+        if (!setCacheForNetMonthlyTransaction(transactionData.user_id))
           // caching failed the delete previous caching
           redisClient.HDEL(`user${transaction.user_id}`, "totalTransaction");
         // recent Transaction Data
@@ -306,48 +302,42 @@ module.exports = {
           // caching failed the delete previous caching
           redisClient.HDEL(`user${transaction.user_id}`, "recentTransaction");
 
-        if (
-          transactionData.attribute === "amount" ||
-          transactionData.attribute === "transaction_type_id" ||
-          transactionData.attribute === "category_id" ||
-          transactionData.attribute === "mode_of_payment" ||
-          transactionData.attribute === "title"
-        ) {
-          transactionData.trans_type = "UPDATE";
-          let statsResult = null;
-          try {
-            const clientToken = req.headers.Authorization;
+        transactionData.trans_type = "UPDATE";
+        let statsResult = null;
+        try {
+          const clientToken = req.headers.Authorization;
 
-            let statsResponse = await fetch("https://localhost:3003/stats", {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json;charset=utf-8",
-                Authorization: "Bearer " + clientToken,
-              },
-              body: JSON.stringify(transactionData),
-            });
+          let statsResponse = await fetch("http://localhost:3003/stats", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json;charset=utf-8",
+              Authorization: "Bearer " + clientToken,
+            },
+            body: JSON.stringify(transactionData),
+          });
+          console.log(statsResponse);
 
-            statsResult = await statsResponse.json();
-          } catch (err) {
-            console.log(err);
-          }
+          // statsResult = await statsResponse.json();
+          statsResult = {};
+        } catch (err) {
+          console.log(err);
+        }
 
-          if (statsResult === null || statsResult.success != 1) {
-            const clientToken = req.headers.Authorization;
+        if (statsResult === null || statsResult.success != 1) {
+          const clientToken = req.headers.Authorization;
 
-            // if stats service failed to recieve data post data to event bus
-            let eventResponse = await fetch("http://localhost:3004/event", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json;charset=utf-8",
-                Authorization: "Bearer " + clientToken,
-              },
-              body: JSON.stringify(transactionData),
-            });
+          // if stats service failed to recieve data post data to event bus
+          let eventResponse = await fetch("http://localhost:3004/event", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json;charset=utf-8",
+              Authorization: "Bearer " + clientToken,
+            },
+            body: JSON.stringify(transactionData),
+          });
 
-            let eventResult = await eventResponse.json();
-            console.log("result from eventbus,", eventResult);
-          }
+          let eventResult = await eventResponse.json();
+          console.log("result from eventbus,", eventResult);
         }
 
         return res.status(200).json({
@@ -437,8 +427,10 @@ module.exports = {
   getRecentTransaction: async (req, res) => {
     // console.log("from controller : recent trans..");
     let user_id = req.params.userid;
+    console.log(user_id);
     try {
       let result = await getRecentTransaction(user_id);
+      console.log(result);
       if (result.name)
         return res.status(500).json({
           success: 0,
